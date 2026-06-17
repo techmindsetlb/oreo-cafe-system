@@ -66,13 +66,15 @@ function startAutoCloseScheduler() {
       if (hour < 3) return;
 
       const today = localDateStr();
-      const openDays = await allAsync("SELECT * FROM business_days WHERE status='open' AND date<?", [today]);
+      // Close previous days' open days; also close today's if opened before 3 AM
+      const openDays = await allAsync("SELECT * FROM business_days WHERE status='open' AND (date<? OR (date=? AND opened_at IS NOT NULL AND strftime('%s','now','localtime') - strftime('%s',opened_at) > 7200))", [today, today]);
       if (!openDays.length) return;
 
       for (const day of openDays) {
         // Calculate expected closing cash = opening_cash + revenue from paid orders on that day
         const opening = parseFloat(day.opening_cash || 0);
-        const revRow = await getAsync("SELECT COALESCE(SUM(total),0) as rev FROM orders WHERE DATE(created_at)=? AND payment_status='paid'", [day.date]);
+        // Note: created_at is stored in local time, so DATE(created_at) matches business day dates correctly
+      const revRow = await getAsync("SELECT COALESCE(SUM(total),0) as rev FROM orders WHERE DATE(created_at)=? AND payment_status='paid'", [day.date]);
         const revenue = parseFloat(revRow?.rev || 0);
         const closingCash = opening + revenue;
 

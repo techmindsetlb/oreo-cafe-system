@@ -56,6 +56,17 @@ router.post('/open', authenticateToken, authorizeRoles('superadmin','admin','man
   const today = localDate();
   const { opening_cash, notes } = req.body;
   try {
+    // ── Close any other open day first (prevents multiple open days) ──
+    const otherOpen = await allAsync("SELECT * FROM business_days WHERE status='open' AND date!=?", [today]);
+    for (const d of otherOpen) {
+      const opening = parseFloat(d.opening_cash || 0);
+      const revRow = await getAsync("SELECT COALESCE(SUM(total),0) as rev FROM orders WHERE DATE(created_at)=? AND payment_status='paid'", [d.date]);
+      const revenue = parseFloat(revRow?.rev || 0);
+      const closingCash = opening + revenue;
+      await runAsync("UPDATE business_days SET status='closed', closed_at=?, closing_cash=?, notes=COALESCE(notes||' ','')||'[Auto-closed — new day opened]' WHERE id=?",
+        [localNow(), closingCash, d.id]);
+    }
+
     const existing = await getAsync('SELECT * FROM business_days WHERE date=?',[today]);
     if (existing && existing.status==='open')
       return res.status(400).json({error:'Day is already open'});

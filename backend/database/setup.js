@@ -224,13 +224,7 @@ async function initializeDatabase() {
     ]) await runAsync('INSERT INTO inventory (name,quantity,unit,min_quantity,cost_per_unit) VALUES (?,?,?,?,?)',[n,q,u,m,c]);
   }
 
-  // ── Open today's business day if none exists ──────────────────────────────────
-  const today = new Date().toISOString().split('T')[0];
-  const todayDay = await getAsync('SELECT id FROM business_days WHERE date=?',[today]);
-  if (!todayDay) {
-    await runAsync('INSERT OR IGNORE INTO business_days (date,opened_at,status) VALUES (?,?,?)',
-      [today, new Date().toISOString(), 'open']);
-  }
+  // ✓ Day NOT auto-opened — user must open manually in Business Day page
 
   console.log('✓ Database ready (v3)');
 }

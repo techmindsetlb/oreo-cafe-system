@@ -4,8 +4,9 @@ const { authenticateToken, authorizeRoles } = require('../middleware/auth');
 const router = express.Router();
 
 async function nextInvoiceNumber() {
-  // Invoice numbers reset per day: count today's orders + 1
-  const today = new Date().toISOString().split('T')[0];
+  // Invoice numbers reset per day: count today's orders + 1 (use LOCAL date)
+  const now = new Date();
+  const today = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
   const row = await getAsync("SELECT COUNT(*) as c FROM orders WHERE DATE(created_at)=?",[today]);
   return (row?.c || 0) + 1;
 }
@@ -54,8 +55,9 @@ router.post('/', authenticateToken, async (req, res) => {
   const { order_type, table_id, items, notes, discount, payment_method, persons } = req.body;
   if (!items?.length) return res.status(400).json({error:'No items'});
   try {
-    // Check business day is open before allowing orders
-    const today = new Date().toISOString().split('T')[0];
+    // Check business day is open before allowing orders (use LOCAL date to match businessDay.js)
+    const now = new Date();
+    const today = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
     const day = await getAsync("SELECT * FROM business_days WHERE date=? AND status='open'",[today]);
     if (!day) return res.status(400).json({error:'Business day is not open. Please open the day first.'});
     let subtotal=0;
@@ -78,8 +80,8 @@ router.post('/', authenticateToken, async (req, res) => {
     const inv = await nextInvoiceNumber();
     const pStatus = payment_method ? 'paid' : 'unpaid';
     const r = await runAsync(
-      `INSERT INTO orders (order_type,table_id,employee_id,status,subtotal,discount,total,notes,invoice_number,payment_method,payment_status)
-       VALUES (?,?,?,'pending',?,?,?,?,?,?,?)`,
+      `INSERT INTO orders (order_type,table_id,employee_id,status,subtotal,discount,total,notes,invoice_number,payment_method,payment_status,created_at)
+       VALUES (?,?,?,'pending',?,?,?,?,?,?,?,datetime('now','localtime'))`,
       [order_type||'takeaway', table_id||null, req.user.id, subtotal, discount||0, total, notes||null, inv, payment_method||null, pStatus]
     );
     const oid = r.lastID;

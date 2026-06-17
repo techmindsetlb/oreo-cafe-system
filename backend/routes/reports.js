@@ -37,7 +37,8 @@ async function dailyBreakdown(dateFrom, dateTo) {
 
 // GET /daily?date=YYYY-MM-DD
 router.get('/daily', authenticateToken, async (req, res) => {
-  const date = req.query.date || new Date().toISOString().split('T')[0];
+  const d = new Date();
+  const date = req.query.date || d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   try {
     const sales = await orderSummary(date, date);
     const items = await itemSales(date, date);
@@ -64,8 +65,10 @@ router.get('/range', authenticateToken, async (req, res) => {
 
 // GET /weekly
 router.get('/weekly', authenticateToken, async (req, res) => {
-  const to = new Date().toISOString().split('T')[0];
-  const from = new Date(Date.now()-6*86400000).toISOString().split('T')[0];
+  const now = new Date();
+  const to = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate()-6);
+  const from = weekAgo.getFullYear()+'-'+String(weekAgo.getMonth()+1).padStart(2,'0')+'-'+String(weekAgo.getDate()).padStart(2,'0');
   try {
     const summary = await orderSummary(from, to);
     const breakdown = await dailyBreakdown(from, to);
@@ -78,7 +81,8 @@ router.get('/weekly', authenticateToken, async (req, res) => {
 
 // GET /monthly?month=YYYY-MM (defaults to current month)
 router.get('/monthly', authenticateToken, async (req, res) => {
-  const month = req.query.month || new Date().toISOString().slice(0,7);
+  const now = new Date();
+  const month = req.query.month || now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
   const from = month + '-01';
   const lastDay = new Date(parseInt(month.split('-')[0]), parseInt(month.split('-')[1]), 0).getDate();
   const to = month + '-' + String(lastDay).padStart(2,'0');
