@@ -823,10 +823,33 @@ function GamingPage(){
   const[gamingToast,setGamingToast]=useState('');
   const timerRef=useRef(null);
   const lastNotifiedHour=useRef(0);
+  const gDraftTimer=useRef(null);
 
-  useEffect(()=>{load();if(activeSess?.start)startTimer(activeSess.start,activeSess.label);return()=>{if(timerRef.current)clearInterval(timerRef.current);};},[]);
+  useEffect(()=>{
+    load();if(activeSess?.start)startTimer(activeSess.start,activeSess.label);
+    // Restore gaming draft from DB
+    api.orders.getDraft().then(draft=>{
+      if(draft&&draft.gtabs&&draft.gtabs.length>0&&draft.gtabs.some(t=>t.cart&&t.cart.length>0)){
+        setGtabs(draft.gtabs);
+        setActiveGTab(draft.activeGTab||0);
+        if(draft.activeSess){setActiveSess(draft.activeSess);gamingDB.set(draft.activeSess);}
+        setGamingToast('♻️ Restored gaming cart');
+      }
+    }).catch(()=>{});
+    return()=>{if(timerRef.current)clearInterval(timerRef.current);};
+  },[]);
   useEffect(()=>{localStorage.setItem('cafe_gaming_tabs',JSON.stringify(gtabs));},[gtabs]);
   useEffect(()=>{if(activeSess)gamingDB.set(activeSess);else gamingDB.clear();},[activeSess]);
+  // Auto-save gaming tabs to DB (debounced 2s)
+  useEffect(()=>{
+    if(gDraftTimer.current)clearTimeout(gDraftTimer.current);
+    gDraftTimer.current=setTimeout(()=>{
+      if(gtabs.some(t=>t.cart&&t.cart.length>0)){
+        api.orders.saveDraft({gtabs,activeGTab,activeSess}).catch(()=>{});
+      }
+    },2000);
+    return()=>{if(gDraftTimer.current)clearTimeout(gDraftTimer.current);};
+  },[gtabs,activeGTab,activeSess]);
 
   const endAllSessions=async()=>{try{const r=await apiFetch('POST','/tables/gaming-sessions/end-all');lastNotifiedHour.current=0;if(timerRef.current)clearInterval(timerRef.current);setElapsed('00:00:00');setActiveSess(null);gamingDB.clear();setGtabs(p=>p.map(t=>({...t,session:null,stationId:null,stationLabel:''})));load();alert(r.message);}catch(ex){alert(ex.message);}};
 
@@ -907,7 +930,7 @@ if(alreadyInUse)return alert('This station is already in use in another tab.');
         const inv=await api.orders.getOne(r.id);
         setInvoiceOrder(inv);
       }
-    setShowPay(false);load();}catch(ex){alert(ex.message);}finally{setBusy(false);}};
+    api.orders.deleteDraft().catch(()=>{});setShowPay(false);load();}catch(ex){alert(ex.message);}finally{setBusy(false);}};
 
   const SI={playstation:'🎮',pc:'🖥',billiards:'🎱',babyfoot:'⚽'};
 
