@@ -1,0 +1,7 @@
+for nizar:
+----------
+username: nizar@cafe.com
+pass: Cue@Corner26
+
+username: admin@cafe.com
+pass: admin123

@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# Build output
+frontend/build/
+
+# Database files (contains sensitive data)
+backend/database/cafe.db
+backend/database/cafe.db-shm
+backend/database/cafe.db-wal
+backend/backups/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+nul
+tmp/
+temp/
+
+# Fix/patch scripts (temporary)
+comprehensive_fix.js
+comprehensive_fix2.js
+fix_all2.js
+fix_app.js
+fix_app_final.js
+fix_customers.js
+fix_dup_person.js
+fix_pos_cart.js
+recover_app.js
+missing_code.txt
+missing_code_module.js
+test_api.js
+test_entertainment.js
