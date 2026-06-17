@@ -97,6 +97,14 @@ function startAutoCloseScheduler() {
       await runAsync("UPDATE tables SET status='available' WHERE type='table' AND status='occupied'");
 
       // ── Cleanup: cancel unpaid orders from previous days ──────────
+      const unpaidToCancel = await allAsync("SELECT id FROM orders WHERE DATE(created_at)<? AND payment_status!='paid' AND status!='cancelled'", [today]);
+      for (const o of unpaidToCancel) {
+        // Restore stock for each order before cancelling
+        const orderItems = await allAsync('SELECT menu_item_id, quantity FROM order_items WHERE order_id=?', [o.id]);
+        for (const oi of orderItems) {
+          await runAsync('UPDATE menu_items SET stock_quantity = stock_quantity + ? WHERE id = ? AND track_stock = 1', [oi.quantity, oi.menu_item_id]);
+        }
+      }
       await runAsync("UPDATE orders SET status='cancelled',notes=COALESCE(notes||' ','')||'[Auto-cancelled - day auto-closed]' WHERE DATE(created_at)<? AND payment_status!='paid'",[today]);
 
       if (activeGaming.length > 0) {

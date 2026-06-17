@@ -78,6 +78,13 @@ router.post('/open', authenticateToken, authorizeRoles('superadmin','admin','man
     await runAsync("UPDATE tables SET status='available' WHERE type='table' AND status='occupied'");
     
     // ── Cleanup: cancel any pending/unpaid orders from previous days ─
+    const unpaidToCancel = await allAsync("SELECT id FROM orders WHERE DATE(created_at)<? AND payment_status!='paid' AND status!='cancelled'", [today]);
+    for (const o of unpaidToCancel) {
+      const orderItems = await allAsync('SELECT menu_item_id, quantity FROM order_items WHERE order_id=?', [o.id]);
+      for (const oi of orderItems) {
+        await runAsync('UPDATE menu_items SET stock_quantity = stock_quantity + ? WHERE id = ? AND track_stock = 1', [oi.quantity, oi.menu_item_id]);
+      }
+    }
     await runAsync("UPDATE orders SET status='cancelled',notes=COALESCE(notes||' ','')||'[Auto-cancelled - new day opened]' WHERE DATE(created_at)<? AND payment_status!='paid'",[today]);
     
     res.json({message:'Day opened — all sessions ended, tables freed, pending orders cancelled', date:today, opened_at:now,
