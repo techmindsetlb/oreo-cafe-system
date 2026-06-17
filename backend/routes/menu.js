@@ -68,13 +68,13 @@ router.get('/items/:id', async (req, res) => {
 });
 
 router.post('/items', authenticateToken, authorizeRoles('superadmin', 'admin', 'manager'), async (req, res) => {
-  const { name, description, price, category_id, image, preparation_time, recipe } = req.body;
+  const { name, description, price, category_id, image, preparation_time, recipe, track_stock, stock_quantity } = req.body;
   if (!name || price === undefined) return res.status(400).json({ error: 'Name and price required' });
 
   try {
     const result = await runAsync(
-      'INSERT INTO menu_items (name, description, price, category_id, image, preparation_time) VALUES (?, ?, ?, ?, ?, ?)',
-      [name, description || null, price, category_id || null, image || null, preparation_time || 5]
+      'INSERT INTO menu_items (name, description, price, category_id, image, preparation_time, track_stock, stock_quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [name, description || null, price, category_id || null, image || null, preparation_time || 5, track_stock ? 1 : 0, track_stock ? (stock_quantity || 0) : 0]
     );
 
     const itemId = result.lastID;
@@ -84,18 +84,32 @@ router.post('/items', authenticateToken, authorizeRoles('superadmin', 'admin', '
       }
     }
 
-    res.status(201).json({ id: itemId, name, price });
+    res.status(201).json({ id: itemId, name, price, track_stock: !!track_stock, stock_quantity: track_stock ? (stock_quantity || 0) : 0 });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 router.put('/items/:id', authenticateToken, authorizeRoles('superadmin', 'admin', 'manager'), async (req, res) => {
-  const { name, description, price, category_id, image, is_available, preparation_time, recipe } = req.body;
+  const { name, description, price, category_id, image, is_available, preparation_time, recipe, track_stock, stock_quantity } = req.body;
   try {
+    // If track_stock is explicitly provided, handle it; otherwise leave as-is
+    let trackSql = '', trackParams = [];
+    if (track_stock !== undefined) {
+      const ts = track_stock ? 1 : 0;
+      const sq = track_stock ? (stock_quantity !== undefined ? stock_quantity : 0) : 0;
+      trackSql = ', track_stock = ?, stock_quantity = ?';
+      trackParams = [ts, sq];
+    } else if (stock_quantity !== undefined) {
+      // Update stock_quantity without changing track_stock
+      trackSql = ', stock_quantity = ?';
+      trackParams = [stock_quantity];
+    }
+
     await runAsync(`
       UPDATE menu_items SET name = COALESCE(?, name), description = COALESCE(?, description),
       price = COALESCE(?, price), category_id = COALESCE(?, category_id), image = COALESCE(?, image),
-      is_available = COALESCE(?, is_available), preparation_time = COALESCE(?, preparation_time) WHERE id = ?
-    `, [name, description, price, category_id, image, is_available, preparation_time, req.params.id]);
+      is_available = COALESCE(?, is_available), preparation_time = COALESCE(?, preparation_time)
+      ${trackSql} WHERE id = ?
+    `, [name, description, price, category_id, image, is_available, preparation_time, ...trackParams, req.params.id]);
 
     if (recipe) {
       await runAsync('DELETE FROM menu_inventory WHERE menu_item_id = ?', [req.params.id]);

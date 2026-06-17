@@ -56,6 +56,13 @@ router.post('/', authenticateToken, async (req, res) => {
     for (const item of items) {
       const mi = await getAsync('SELECT * FROM menu_items WHERE id=?',[item.menu_item_id]);
       if (!mi) return res.status(400).json({error:`Item ${item.menu_item_id} not found`});
+      // Check stock
+      if (mi.track_stock && mi.stock_quantity < item.quantity) {
+        const available = mi.stock_quantity;
+        return res.status(400).json({
+          error: `Not enough stock for "${mi.name}". Available: ${available}, requested: ${item.quantity}`
+        });
+      }
       const up = item.unit_price!=null ? item.unit_price : mi.price;
       subtotal += up*item.quantity;
       oItems.push({...item, unit_price:up, total_price:up*item.quantity});
@@ -72,6 +79,8 @@ router.post('/', authenticateToken, async (req, res) => {
     for (const item of oItems) {
       await runAsync('INSERT INTO order_items (order_id,menu_item_id,quantity,unit_price,total_price,notes,person_label) VALUES (?,?,?,?,?,?,?)',
         [oid,item.menu_item_id,item.quantity,item.unit_price,item.total_price,item.notes||null,item.person_label||null]);
+      // Decrement stock for tracked items
+      await runAsync('UPDATE menu_items SET stock_quantity = stock_quantity - ? WHERE id = ? AND track_stock = 1', [item.quantity, item.menu_item_id]);
     }
     // Create persons if provided
     if (persons?.length) {
@@ -95,12 +104,20 @@ router.post('/:id/items', authenticateToken, async (req, res) => {
     let added=0;
     for (const item of items) {
       const mi = await getAsync('SELECT * FROM menu_items WHERE id=?',[item.menu_item_id]);
-      if (!mi) continue;
+      if (!mi) { continue; }
+      // Check stock
+      if (mi.track_stock && mi.stock_quantity < item.quantity) {
+        return res.status(400).json({
+          error: `Not enough stock for "${mi.name}". Available: ${mi.stock_quantity}, requested: ${item.quantity}`
+        });
+      }
       const up = item.unit_price!=null ? item.unit_price : mi.price;
       const tp = up*item.quantity;
       added += tp;
       await runAsync('INSERT INTO order_items (order_id,menu_item_id,quantity,unit_price,total_price,person_label) VALUES (?,?,?,?,?,?)',
         [req.params.id,item.menu_item_id,item.quantity,up,tp,item.person_label||null]);
+      // Decrement stock for tracked items
+      await runAsync('UPDATE menu_items SET stock_quantity = stock_quantity - ? WHERE id = ? AND track_stock = 1', [item.quantity, item.menu_item_id]);
     }
     await runAsync('UPDATE orders SET subtotal=subtotal+?,total=total+? WHERE id=?',[added,added,req.params.id]);
     const updated = await getAsync('SELECT * FROM orders WHERE id=?',[req.params.id]);

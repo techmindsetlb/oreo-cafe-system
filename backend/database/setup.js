@@ -133,8 +133,14 @@ async function initializeDatabase() {
     'ALTER TABLE orders ADD COLUMN invoice_number INTEGER DEFAULT NULL',
     'ALTER TABLE order_items ADD COLUMN person_label TEXT DEFAULT NULL',
     'ALTER TABLE categories ADD COLUMN icon TEXT DEFAULT NULL',
+    'ALTER TABLE menu_items ADD COLUMN track_stock INTEGER DEFAULT 0',
+    'ALTER TABLE menu_items ADD COLUMN stock_quantity INTEGER DEFAULT 0',
   ];
   for (const m of migrations) { try { await runAsync(m); } catch {} }
+
+  // Backfill stock for existing items: set default stock if track_stock=NULL
+  await runAsync("UPDATE menu_items SET track_stock=0 WHERE track_stock IS NULL");
+  await runAsync("UPDATE menu_items SET stock_quantity=0 WHERE stock_quantity IS NULL");
 
   // Backfill invoice numbers
   await runAsync('UPDATE orders SET invoice_number = id WHERE invoice_number IS NULL');
