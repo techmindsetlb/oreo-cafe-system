@@ -126,6 +126,14 @@ async function initializeDatabase() {
     FOREIGN KEY (menu_item_id) REFERENCES menu_items(id) ON DELETE CASCADE,
     FOREIGN KEY (inventory_item_id) REFERENCES inventory(id) ON DELETE CASCADE)`);
 
+  // POS drafts (crash-safe cart saving)
+  await runAsync(`CREATE TABLE IF NOT EXISTS pos_drafts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    employee_id INTEGER NOT NULL,
+    draft_data TEXT NOT NULL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employee_id) REFERENCES employees(id))`);
+
   // ── Migrations for existing DBs ──────────────────────────────────────────────
   const migrations = [
     'ALTER TABLE tables ADD COLUMN reservation_name TEXT DEFAULT NULL',
@@ -136,6 +144,7 @@ async function initializeDatabase() {
     'ALTER TABLE menu_items ADD COLUMN track_stock INTEGER DEFAULT 0',
     'ALTER TABLE menu_items ADD COLUMN stock_quantity INTEGER DEFAULT 0',
     'ALTER TABLE menu_items ADD COLUMN cost REAL DEFAULT 0',
+    'CREATE TABLE IF NOT EXISTS pos_drafts (id INTEGER PRIMARY KEY AUTOINCREMENT, employee_id INTEGER NOT NULL, draft_data TEXT NOT NULL, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (employee_id) REFERENCES employees(id))',
   ];
   for (const m of migrations) { try { await runAsync(m); } catch {} }
 

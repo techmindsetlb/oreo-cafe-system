@@ -121,7 +121,7 @@ const api={
   menu:{getCategories:()=>apiFetch('GET','/menu/categories'),createCategory:d=>apiFetch('POST','/menu/categories',d),deleteCategory:id=>apiFetch('DELETE',`/menu/categories/${id}`),getItems:()=>apiFetch('GET','/menu/items'),createItem:d=>apiFetch('POST','/menu/items',d),updateItem:(id,d)=>apiFetch('PUT',`/menu/items/${id}`,d),deleteItem:id=>apiFetch('DELETE',`/menu/items/${id}`)},
   inventory:{getAll:()=>apiFetch('GET','/inventory'),getLowStock:()=>apiFetch('GET','/inventory/low'),create:d=>apiFetch('POST','/inventory',d),update:(id,d)=>apiFetch('PUT',`/inventory/${id}`,d),adjust:(id,d)=>apiFetch('POST',`/inventory/${id}/adjust`,d),delete:id=>apiFetch('DELETE',`/inventory/${id}`)},
   tables:{getAll:()=>apiFetch('GET','/tables'),create:d=>apiFetch('POST','/tables',d),updateStatus:(id,s)=>apiFetch('PUT',`/tables/${id}/status`,{status:s}),reserve:(id,d)=>apiFetch('PUT',`/tables/${id}/reserve`,d),cancelReservation:id=>apiFetch('PUT',`/tables/${id}/cancel-reservation`),delete:id=>apiFetch('DELETE',`/tables/${id}`),startSession:id=>apiFetch('POST',`/tables/${id}/start-session`),endSession:id=>apiFetch('POST',`/tables/${id}/end-session`)},
-  orders:{getAll:p=>apiFetch('GET',`/orders${p?'?'+new URLSearchParams(p):''}`),getOne:id=>apiFetch('GET',`/orders/${id}`),create:d=>apiFetch('POST','/orders',d),addItems:(id,items)=>apiFetch('POST',`/orders/${id}/items`,{items}),addPerson:(id,label)=>apiFetch('POST',`/orders/${id}/persons`,{label}),payPerson:(oid,pid,method)=>apiFetch('PUT',`/orders/${oid}/persons/${pid}/pay`,{method}),updateStatus:(id,s)=>apiFetch('PUT',`/orders/${id}/status`,{status:s}),processPayment:(id,m)=>apiFetch('PUT',`/orders/${id}/payment`,{payment_method:m}),markPaid:(id,method)=>apiFetch('PUT',`/orders/${id}/mark-paid`,{payment_method:method||'cash'}),markUnpaid:id=>apiFetch('PUT',`/orders/${id}/mark-unpaid`),delete:id=>apiFetch('DELETE',`/orders/${id}`)},
+  orders:{getAll:p=>apiFetch('GET',`/orders${p?'?'+new URLSearchParams(p):''}`),getOne:id=>apiFetch('GET',`/orders/${id}`),create:d=>apiFetch('POST','/orders',d),addItems:(id,items)=>apiFetch('POST',`/orders/${id}/items`,{items}),addPerson:(id,label)=>apiFetch('POST',`/orders/${id}/persons`,{label}),payPerson:(oid,pid,method)=>apiFetch('PUT',`/orders/${oid}/persons/${pid}/pay`,{method}),updateStatus:(id,s)=>apiFetch('PUT',`/orders/${id}/status`,{status:s}),processPayment:(id,m)=>apiFetch('PUT',`/orders/${id}/payment`,{payment_method:m}),markPaid:(id,method)=>apiFetch('PUT',`/orders/${id}/mark-paid`,{payment_method:method||'cash'}),markUnpaid:id=>apiFetch('PUT',`/orders/${id}/mark-unpaid`),delete:id=>apiFetch('DELETE',`/orders/${id}`),getDraft:()=>apiFetch('GET','/orders/draft'),saveDraft:d=>apiFetch('PUT','/orders/draft',{draft_data:d}),deleteDraft:()=>apiFetch('DELETE','/orders/draft')},
   reports:{getDaily:date=>apiFetch('GET',`/reports/daily?date=${date}`),getWeekly:()=>apiFetch('GET','/reports/weekly'),getMonthly:m=>apiFetch('GET',`/reports/monthly${m?'?month='+m:''}`),getRange:(f,t)=>apiFetch('GET',`/reports/range?from=${f}&to=${t}`),getNetProfit:(f,t)=>apiFetch('GET',`/reports/net-profit?from=${f}&to=${t}`)},
   settings:{get:k=>apiFetch('GET',`/settings/${k}`),set:(k,v)=>apiFetch('PUT',`/settings/${k}`,{value:v})},
   backup:{create:()=>apiFetch('POST','/settings/backup'),list:()=>apiFetch('GET','/settings/backups'),restore:fn=>apiFetch('POST','/settings/backup/restore',{filename:fn})},
@@ -389,10 +389,37 @@ function POSPage(){
   const[personInput,setPersonInput]=useState('');const[activePerson,setActivePerson]=useState(null);
   const[customers,setCustomers]=useState([]);const[custSearch,setCustSearch]=useState('');const[showCustDropdown,setShowCustDropdown]=useState(false);
   const[showPersonPay,setShowPersonPay]=useState(null);
+  const draftTimer=useRef(null);
 
-  useEffect(()=>{loadData();api.settings.get('mobile_qr').then(r=>{if(r.value)setQrCode(r.value);}).catch(()=>{});loadCustomers();},[]);
+  useEffect(()=>{
+    loadData();api.settings.get('mobile_qr').then(r=>{if(r.value)setQrCode(r.value);}).catch(()=>{});loadCustomers();
+    // Restore crash-safe draft from DB
+    api.orders.getDraft().then(draft=>{
+      if(draft&&draft.cart&&draft.cart.length>0){
+        const idx=tabs.findIndex(t=>t.draftId===draft.draftId);
+        if(idx===-1){
+          setTabs(p=>{const t={...newDraft(),...draft};return[p[0],...p.slice(1).filter(x=>!x.cart.length&&!x.openOrderId),t];});
+          setActiveTab(tabs.length);
+        } else {
+          setTabs(p=>p.map((t,i)=>i===idx?{...t,...draft}:t));
+        }
+        setToast('♻️ Restored your previous cart');
+      }
+    }).catch(()=>{});
+  },[]);
   const loadCustomers=async(s)=>{try{const d=await api.customers.getAll(s||'');setCustomers(Array.isArray(d)?d:[]);}catch{}};
   useEffect(()=>{draftDB.saveAll(tabs);},[tabs]);
+  // Auto-save cart to DB whenever tabs change (debounced 2s)
+  useEffect(()=>{
+    if(draftTimer.current)clearTimeout(draftTimer.current);
+    draftTimer.current=setTimeout(()=>{
+      const active=tabs[activeTab||0];
+      if(active&&active.cart&&active.cart.length>0){
+        api.orders.saveDraft({draftId:active.draftId,orderType:active.orderType,selTable:active.selTable,cart:active.cart.map(c=>({id:c.id,name:c.name,price:c.price,qty:c.qty,person:c.person})),discount:active.discount,notes:active.notes,persons:active.persons,paidPersons:active.paidPersons}).catch(()=>{});
+      }
+    },2000);
+    return ()=>{if(draftTimer.current)clearTimeout(draftTimer.current);};
+  },[tabs,activeTab]);
 
   const loadData=async()=>{try{const[c,i,tb]=await Promise.all([api.menu.getCategories(),api.menu.getItems(),api.tables.getAll()]);setCats((Array.isArray(c)?c:[]).filter(x=>x.name!=='Entertainment'));setMenuItems(Array.isArray(i)?i:[]);setAllTables(Array.isArray(tb)?tb:[]);}catch{}};
 
@@ -406,7 +433,7 @@ function POSPage(){
     updateCur({cart:nc});
   };
   const updateQty=(id,person,delta)=>updateCur({cart:cur.cart.map(c=>c.id===id&&c.person===person?{...c,qty:c.qty+delta}:c).filter(c=>c.qty>0)});
-  const clearCur=()=>{updateCur({cart:[],discount:0,notes:'',orderType:null,selTable:'',openOrderId:null,persons:[]});setActivePerson(null);};
+  const clearCur=()=>{updateCur({cart:[],discount:0,notes:'',orderType:null,selTable:'',openOrderId:null,persons:[]});setActivePerson(null);api.orders.deleteDraft().catch(()=>{});};
   const addNewTab=()=>{const nd=newDraft();setTabs(p=>[...p,nd]);setActiveTab(tabs.length);setSelCat(null);setActivePerson(null);};
   const closeTab=idx=>{if(tabs.length===1){clearCur();return;}setTabs(p=>p.filter((_,i)=>i!==idx));setActiveTab(Math.max(0,activeTab-(idx<=activeTab?1:0)));};
 
@@ -441,7 +468,7 @@ function POSPage(){
           if(allPaid){
             await api.orders.processPayment(cur.openOrderId,method);
             await api.orders.updateStatus(cur.openOrderId,'completed');
-            closeTab(activeTab);setToast(t.orderDone);
+            closeTab(activeTab);api.orders.deleteDraft().catch(()=>{});setToast(t.orderDone);
           } else {
             const otherItems=cur.cart.filter(c=>c.person!==payingPerson);
             updateCur({cart:otherItems,openOrderId:cur.openOrderId,paidPersons:newPaid});
@@ -451,7 +478,7 @@ function POSPage(){
           await api.orders.processPayment(cur.openOrderId,method);
           await api.orders.updateStatus(cur.openOrderId,'completed');
           setInvoiceOrder(fullOrder);
-          closeTab(activeTab);setToast(t.orderDone);
+          closeTab(activeTab);api.orders.deleteDraft().catch(()=>{});setToast(t.orderDone);
         }
       }else{
         // Create new order with ALL cart items (not just paying person's items)
@@ -470,7 +497,7 @@ function POSPage(){
           if(allPaid){
             await api.orders.processPayment(orderId,method);
             await api.orders.updateStatus(orderId,'completed');
-            closeTab(activeTab);setToast(t.orderDone);
+            closeTab(activeTab);api.orders.deleteDraft().catch(()=>{});setToast(t.orderDone);
           } else {
             const otherItems=cur.cart.filter(c=>c.person!==payingPerson);
             updateCur({cart:otherItems,openOrderId:orderId,paidPersons:newPaid});
@@ -481,7 +508,7 @@ function POSPage(){
           await api.orders.updateStatus(orderId,'completed');
           orderData=await api.orders.getOne(orderId);
           setInvoiceOrder(orderData);
-          closeTab(activeTab);setToast(t.orderDone);
+          closeTab(activeTab);api.orders.deleteDraft().catch(()=>{});setToast(t.orderDone);
         }
       }
       setShowPay(false);setShowPersonPay(null);setShowMobilePay(false);setProofImg(null);setProofVerified(false);loadData();

@@ -35,6 +35,37 @@ router.get('/', authenticateToken, async (req, res) => {
   try { res.json(await allAsync(q,p)); } catch(e){ res.status(500).json({error:e.message}); }
 });
 
+// ── Draft: get current user's saved POS cart (must be BEFORE /:id routes!) ─
+router.get('/draft', authenticateToken, async (req, res) => {
+  try {
+    const draft = await getAsync('SELECT * FROM pos_drafts WHERE employee_id=? ORDER BY updated_at DESC LIMIT 1', [req.user.id]);
+    res.json(draft ? JSON.parse(draft.draft_data) : null);
+  } catch(e){ res.status(500).json({error:e.message}); }
+});
+
+router.put('/draft', authenticateToken, async (req, res) => {
+  const { draft_data } = req.body;
+  if (!draft_data) return res.status(400).json({error:'draft_data required'});
+  try {
+    const existing = await getAsync('SELECT id FROM pos_drafts WHERE employee_id=?', [req.user.id]);
+    if (existing) {
+      await runAsync('UPDATE pos_drafts SET draft_data=?, updated_at=datetime("now","localtime") WHERE id=?',
+        [JSON.stringify(draft_data), existing.id]);
+    } else {
+      await runAsync('INSERT INTO pos_drafts (employee_id,draft_data) VALUES (?,?)',
+        [req.user.id, JSON.stringify(draft_data)]);
+    }
+    res.json({message:'Draft saved'});
+  } catch(e){ res.status(500).json({error:e.message}); }
+});
+
+router.delete('/draft', authenticateToken, async (req, res) => {
+  try {
+    await runAsync('DELETE FROM pos_drafts WHERE employee_id=?', [req.user.id]);
+    res.json({message:'Draft deleted'});
+  } catch(e){ res.status(500).json({error:e.message}); }
+});
+
 // GET single
 router.get('/:id', authenticateToken, async (req, res) => {
   try {
