@@ -207,7 +207,7 @@ router.put('/:id/payment', authenticateToken, async (req, res) => {
 });
 
 // DELETE
-router.delete('/:id', authenticateToken, authorizeRoles('admin','manager'), async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('superadmin','admin','manager'), async (req, res) => {
   try {
     const order = await getAsync('SELECT * FROM orders WHERE id=?',[req.params.id]);
     if (order?.table_id) await runAsync("UPDATE tables SET status='available' WHERE id=?",[order.table_id]);

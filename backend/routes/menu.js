@@ -11,7 +11,7 @@ router.get('/categories', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-router.post('/categories', authenticateToken, authorizeRoles('admin', 'manager'), async (req, res) => {
+router.post('/categories', authenticateToken, authorizeRoles('superadmin', 'admin', 'manager'), async (req, res) => {
   const { name, description, sort_order, icon } = req.body;
   if (!name) return res.status(400).json({ error: 'Category name required' });
 
@@ -21,7 +21,7 @@ router.post('/categories', authenticateToken, authorizeRoles('admin', 'manager')
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-router.put('/categories/:id', authenticateToken, authorizeRoles('admin', 'manager'), async (req, res) => {
+router.put('/categories/:id', authenticateToken, authorizeRoles('superadmin', 'admin', 'manager'), async (req, res) => {
   const { name, description, sort_order, icon } = req.body;
   try {
     await runAsync('UPDATE categories SET name = COALESCE(?, name), description = COALESCE(?, description), sort_order = COALESCE(?, sort_order), icon = COALESCE(?, icon) WHERE id = ?', [name, description, sort_order, icon, req.params.id]);
@@ -29,7 +29,7 @@ router.put('/categories/:id', authenticateToken, authorizeRoles('admin', 'manage
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-router.delete('/categories/:id', authenticateToken, authorizeRoles('admin', 'manager'), async (req, res) => {
+router.delete('/categories/:id', authenticateToken, authorizeRoles('superadmin', 'admin', 'manager'), async (req, res) => {
   try {
     await runAsync('DELETE FROM categories WHERE id = ?', [req.params.id]);
     res.json({ message: 'Category deleted' });
@@ -67,7 +67,7 @@ router.get('/items/:id', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-router.post('/items', authenticateToken, authorizeRoles('admin', 'manager'), async (req, res) => {
+router.post('/items', authenticateToken, authorizeRoles('superadmin', 'admin', 'manager'), async (req, res) => {
   const { name, description, price, category_id, image, preparation_time, recipe } = req.body;
   if (!name || price === undefined) return res.status(400).json({ error: 'Name and price required' });
 
@@ -88,7 +88,7 @@ router.post('/items', authenticateToken, authorizeRoles('admin', 'manager'), asy
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-router.put('/items/:id', authenticateToken, authorizeRoles('admin', 'manager'), async (req, res) => {
+router.put('/items/:id', authenticateToken, authorizeRoles('superadmin', 'admin', 'manager'), async (req, res) => {
   const { name, description, price, category_id, image, is_available, preparation_time, recipe } = req.body;
   try {
     await runAsync(`
@@ -108,7 +108,7 @@ router.put('/items/:id', authenticateToken, authorizeRoles('admin', 'manager'), 
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-router.delete('/items/:id', authenticateToken, authorizeRoles('admin', 'manager'), async (req, res) => {
+router.delete('/items/:id', authenticateToken, authorizeRoles('superadmin', 'admin', 'manager'), async (req, res) => {
   try {
     await runAsync('DELETE FROM menu_inventory WHERE menu_item_id = ?', [req.params.id]);
     await runAsync('DELETE FROM order_items WHERE menu_item_id = ?', [req.params.id]);

@@ -93,7 +93,7 @@ router.get('/monthly', authenticateToken, async (req, res) => {
 });
 
 // GET /employee
-router.get('/employee', authenticateToken, authorizeRoles('admin','manager'), async (req, res) => {
+router.get('/employee', authenticateToken, authorizeRoles('superadmin','admin','manager'), async (req, res) => {
   try {
     const rows = await allAsync(`
       SELECT e.id,e.name,e.role,COUNT(o.id) as total_orders,COALESCE(SUM(o.total),0) as total_sales

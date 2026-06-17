@@ -49,7 +49,7 @@ router.post('/', authenticateToken, async (req, res) => {
 });
 
 // POST bulk import (for migrating localStorage data)
-router.post('/bulk', authenticateToken, authorizeRoles('admin', 'manager'), async (req, res) => {
+router.post('/bulk', authenticateToken, authorizeRoles('superadmin', 'admin', 'manager'), async (req, res) => {
   const { expenses } = req.body;
   if (!Array.isArray(expenses) || !expenses.length)
     return res.status(400).json({ error: 'Array of expenses required' });
@@ -68,7 +68,7 @@ router.post('/bulk', authenticateToken, authorizeRoles('admin', 'manager'), asyn
 });
 
 // PUT update an expense
-router.put('/:id', authenticateToken, authorizeRoles('admin', 'manager'), async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRoles('superadmin', 'admin', 'manager'), async (req, res) => {
   const { category, amount, description, date } = req.body;
   try {
     const existing = await getAsync('SELECT id FROM expenses WHERE id = ?', [req.params.id]);
@@ -89,7 +89,7 @@ router.put('/:id', authenticateToken, authorizeRoles('admin', 'manager'), async 
 });
 
 // DELETE an expense
-router.delete('/:id', authenticateToken, authorizeRoles('admin', 'manager'), async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('superadmin', 'admin', 'manager'), async (req, res) => {
   try {
     const result = await runAsync('DELETE FROM expenses WHERE id = ?', [req.params.id]);
     if (result.changes === 0) return res.status(404).json({ error: 'Expense not found' });

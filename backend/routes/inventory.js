@@ -18,7 +18,7 @@ router.get('/low', authenticateToken, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-router.post('/', authenticateToken, authorizeRoles('admin', 'manager'), async (req, res) => {
+router.post('/', authenticateToken, authorizeRoles('superadmin', 'admin', 'manager'), async (req, res) => {
   const { name, quantity, unit, min_quantity, cost_per_unit } = req.body;
   if (!name || quantity === undefined || !unit) return res.status(400).json({ error: 'Name, quantity, and unit required' });
 
@@ -29,7 +29,7 @@ router.post('/', authenticateToken, authorizeRoles('admin', 'manager'), async (r
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-router.put('/:id', authenticateToken, authorizeRoles('admin', 'manager'), async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRoles('superadmin', 'admin', 'manager'), async (req, res) => {
   const { name, quantity, unit, min_quantity, cost_per_unit } = req.body;
   try {
     await runAsync(`UPDATE inventory SET name = COALESCE(?, name), quantity = COALESCE(?, quantity),
@@ -56,7 +56,7 @@ router.post('/:id/adjust', authenticateToken, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-router.delete('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('superadmin', 'admin'), async (req, res) => {
   try {
     await runAsync('DELETE FROM inventory WHERE id = ?', [req.params.id]);
     res.json({ message: 'Inventory item deleted' });

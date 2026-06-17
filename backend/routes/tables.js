@@ -8,7 +8,7 @@ router.get('/', authenticateToken, async (req, res) => {
   catch(e){ res.status(500).json({error:e.message}); }
 });
 
-router.post('/', authenticateToken, authorizeRoles('admin','manager'), async (req, res) => {
+router.post('/', authenticateToken, authorizeRoles('superadmin','admin','manager'), async (req, res) => {
   const { number, seats, section, type, hourly_rate } = req.body;
   if (!number) return res.status(400).json({error:'Number required'});
   try {
@@ -69,7 +69,7 @@ router.get('/gaming-sessions/active', authenticateToken, async (req, res) => {
 });
 
 // POST force-end ALL gaming sessions
-router.post('/gaming-sessions/end-all', authenticateToken, authorizeRoles('admin','manager'), async (req, res) => {
+router.post('/gaming-sessions/end-all', authenticateToken, authorizeRoles('superadmin','admin','manager'), async (req, res) => {
   try {
     const active = await allAsync("SELECT * FROM tables WHERE type!='table' AND status='occupied' AND session_start IS NOT NULL");
     for (const tb of active) {
@@ -95,7 +95,7 @@ router.post('/:id/end-session', authenticateToken, async (req, res) => {
 });
 
 // DELETE — nullify order references first to avoid FK constraint
-router.delete('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('superadmin','admin'), async (req, res) => {
   try {
     // Detach any orders referencing this table (set table_id to null)
     await runAsync('UPDATE orders SET table_id=NULL WHERE table_id=?',[req.params.id]);
