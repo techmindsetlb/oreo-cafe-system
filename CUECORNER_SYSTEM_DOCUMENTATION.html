@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cue Corner — Complete System Documentation</title>
+<style>
+  @media print {
+    @page { margin: 1.5cm; size: A4; }
+    body { font-size: 11pt; }
+    .no-print { display: none !important; }
+    h1 { page-break-before: always; }
+    h1:first-of-type { page-break-before: avoid; }
+    h2 { page-break-after: avoid; }
+    h3 { page-break-after: avoid; }
+    pre { page-break-inside: avoid; }
+    table { page-break-inside: avoid; }
+  }
+  body {
+    font-family: 'Segoe UI', -apple-system, sans-serif;
+    line-height: 1.6;
+    color: #1a1a1a;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .cover-page {
+    text-align: center;
+    padding: 80px 0 40px;
+    border-bottom: 3px solid #6f4e37;
+    margin-bottom: 30px;
+  }
+  .cover-page .logo { font-size: 64px; }
+  .cover-page h1 {
+    font-size: 32pt;
+    color: #6f4e37;
+    margin: 10px 0 5px;
+    font-family: Georgia, serif;
+    font-style: italic;
+  }
+  .cover-page .subtitle { font-size: 14pt; color: #666; }
+  .cover-page .meta { font-size: 10pt; color: #999; margin-top: 20px; }
+  h1 { color: #6f4e37; border-bottom: 2px solid #6f4e37; padding-bottom: 6px; margin-top: 40px; font-size: 22pt; }
+  h2 { color: #4a3520; margin-top: 30px; font-size: 16pt; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+  h3 { color: #2a1a0f; margin-top: 20px; font-size: 13pt; }
+  h4 { color: #333; margin-top: 14px; font-size: 11pt; }
+  a { color: #6f4e37; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  pre {
+    background: #f5f0eb;
+    border: 1px solid #e0d5c8;
+    border-radius: 6px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 9.5pt;
+    line-height: 1.4;
+  }
+  code {
+    background: #f5f0eb;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 9.5pt;
+  }
+  pre code { background: none; padding: 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 10pt;
+  }
+  th {
+    background: #6f4e37;
+    color: #fff;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 6px 12px;
+    border-bottom: 1px solid #eee;
+  }
+  tr:nth-child(even) td { background: #faf7f2; }
+  tr:hover td { background: #f5f0eb; }
+  blockquote {
+    border-left: 4px solid #d4a574;
+    margin: 12px 0;
+    padding: 8px 16px;
+    background: #faf7f2;
+    border-radius: 0 6px 6px 0;
+  }
+  blockquote p { margin: 0; }
+  ul, ol { padding-left: 24px; }
+  li { margin: 4px 0; }
+  hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
+  .toc { column-count: 2; column-gap: 30px; margin: 20px 0; }
+  .toc a { display: block; padding: 3px 0; font-size: 10.5pt; }
+  .toc a:hover { color: #d4a574; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 9pt;
+    font-weight: 600;
+  }
+  .badge-green { background: #d4edda; color: #155724; }
+  .badge-red { background: #f8d7da; color: #721c24; }
+  .badge-amber { background: #fff3cd; color: #856404; }
+  .badge-blue { background: #cce5ff; color: #004085; }
+  .no-print {
+    text-align: center;
+    margin: 20px 0;
+  }
+  .no-print button {
+    background: #6f4e37;
+    color: #fff;
+    border: none;
+    padding: 12px 30px;
+    font-size: 14pt;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .no-print button:hover { background: #4a3520; }
+  .footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 2px solid #6f4e37;
+    font-size: 9pt;
+    color: #999;
+  }
+</style>
+</head>
+<body>
+
+<div class="no-print" style="margin-bottom:20px">
+  <button onclick="window.print()">🖨️ Print / Save as PDF</button>
+  <p style="font-size:10pt;color:#666;margin-top:8px">Click the button above, then choose "Save as PDF" in the print dialog.</p>
+</div>
+
+<div class="cover-page">
+  <div class="logo">☕</div>
+  <h1>Cue Corner</h1>
+  <div class="subtitle">Complete System Documentation</div>
+  <div class="meta">
+    Version 4.0 &bull; Generated June 2026<br>
+    SQLite &bull; Node.js/Express &bull; React
+  </div>
+</div>
+
+<h2>Table of Contents</h2>
+<div class="toc">
+  <a href="#s1">1. Getting Started</a>
+  <a href="#s2">2. System Architecture</a>
+  <a href="#s3">3. Authentication &amp; Roles</a>
+  <a href="#s4">4. POS (Point of Sale)</a>
+  <a href="#s5">5. Gaming Page</a>
+  <a href="#s6">6. Orders Page</a>
+  <a href="#s7">7. Menu Management</a>
+  <a href="#s8">8. Tables &amp; Stations</a>
+  <a href="#s9">9. Inventory</a>
+  <a href="#s10">10. Reports &amp; Accounting</a>
+  <a href="#s11">11. Business Day</a>
+  <a href="#s12">12. Employees</a>
+  <a href="#s13">13. Customers</a>
+  <a href="#s14">14. Expenses</a>
+  <a href="#s15">15. Settings &amp; Branding</a>
+  <a href="#s16">16. Crash Recovery</a>
+  <a href="#s17">17. Database Schema</a>
+  <a href="#s18">18. API Reference</a>
+  <a href="#s19">19. Maintenance &amp; Backups</a>
+  <a href="#appendices">Appendices</a>
+</div>
+
+<h1 id="s1">1. Getting Started</h1>
+
+<h2>1.1 Starting the System</h2>
+<p><strong>Using the shortcut (recommended):</strong></p>
+<ul>
+  <li>Double-click <code>start.bat</code> on the desktop</li>
+  <li>This starts the backend server and opens the browser</li>
+  <li>The system runs at <strong>http://localhost:3001</strong></li>
+</ul>
+
+<p><strong>Manual start:</strong></p>
+<pre><code>cd "C:\Users\UserPc\Desktop\Cue Corner"
+node backend/server.js</code></pre>
+
+<h2>1.2 Default Login</h2>
+<table>
+  <tr><th>Email</th><th>Password</th><th>Role</th></tr>
+  <tr><td><code>admin@cafe.com</code></td><td><code>admin123</code></td><td>Super Admin</td></tr>
+</table>
+
+<h2>1.3 Stopping the System</h2>
+<ul>
+  <li>Double-click <code>stop.vbs</code> on the desktop</li>
+  <li>Or press <code>Ctrl+C</code> in the terminal running the server</li>
+  <li>Or close the terminal window</li>
+</ul>
+
+<h2>1.4 Project Structure</h2>
+<pre><code>Cue Corner/
+├── backend/
+│   ├── server.js                 # Main entry point, routes, schedulers
+│   ├── package.json
+│   ├── database/
+│   │   ├── setup.js              # Schema creation, migrations, seed data
+│   │   └── cafe.db               # SQLite database file
+│   ├── middleware/
+│   │   └── auth.js               # JWT authentication + role authorization
+│   ├── routes/
+│   │   ├── orders.js             # Orders CRUD + split bill + drafts
+│   │   ├── tables.js             # Tables + reservations + gaming sessions
+│   │   ├── reports.js            # Daily/weekly/monthly/range + net profit
+│   │   ├── settings.js           # Key-value store + backups
+│   │   ├── businessDay.js        # Open/close day + auto-cleanup
+│   │   ├── employees.js          # CRUD + login + password reset
+│   │   ├── menu.js               # Categories + items + recipes
+│   │   ├── inventory.js          # Stock management + adjustments
+│   │   ├── expenses.js           # Expense tracking + bulk import
+│   │   └── customers.js          # Customer management
+│   ├── backup.js                 # Database backup & restore logic
+│   └── backups/                  # Daily backup files (keeps newest 30)
+├── frontend/
+│   ├── build/                    # Compiled React app (served by backend)
+│   ├── src/
+│   │   ├── App.js                # ALL frontend pages in one file
+│   │   ├── App.css               # Complete design system
+│   │   └── index.js              # React entry point
+│   └── package.json
+├── CUECORNER_SYSTEM_DOCUMENTATION.html  # This document (print/Save as PDF)
+├── CUECORNER_SYSTEM_DOCUMENTATION.md    # Source markdown
+├── create_desktop_shortcut.vbs
+├── create_stop_shortcut.vbs
+├── start.bat
+├── stop.vbs
+└── start.vbs</code></pre>
+
+<h1 id="s2">2. System Architecture</h1>
+
+<h2>2.1 Overview</h2>
+<p>The system is a <strong>single-server, single-file SQLite</strong> application. There is no separate database server — everything runs from one Node.js process that serves both the API and the frontend.</p>
+
+<pre><code>┌─────────────┐     HTTP (port 3001)     ┌──────────────────┐
+│   Browser   │ ◄──────────────────────► │  Node/Express    │
+│  (React)    │                          │  Backend Server  │
+└─────────────┘                          │                  │
+    ┌──────────────────┐                 │  ┌────────────┐  │
+    │  localStorage    │                 │  │  SQLite DB │  │
+    │  (browser cache) │                 │  │  cafe.db   │  │
+    └──────────────────┘                 │  └────────────┘  │
+                                         └──────────────────┘</code></pre>
+
+<h2>2.2 Key Design Decisions</h2>
+<ul>
+  <li><strong>Single-file frontend:</strong> All pages are defined in <code>frontend/src/App.js</code>. This avoids complex routing/fragmentation.</li>
+  <li><strong>SQLite (no separate DB):</strong> The database is a single file (<code>backend/database/cafe.db</code>). No PostgreSQL/MySQL needed.</li>
+  <li><strong>WAL mode:</strong> Uses Write-Ahead Logging for better concurrent read performance.</li>
+  <li><strong>Built frontend:</strong> The React app is compiled into <code>frontend/build/</code> and served as static files from the Express server. No separate frontend dev server needed.</li>
+  <li><strong>Local timezone:</strong> All dates are stored in <strong>local server time</strong> (Lebanon UTC+2/UTC+3), not UTC. This avoids off-by-one-day issues.</li>
+</ul>
+
+<h2>2.3 Startup Sequence</h2>
+<p>When <code>node backend/server.js</code> starts:</p>
+<ol>
+  <li>Express app initializes with CORS and JSON body parser (5MB limit for QR images)</li>
+  <li>All API route files are mounted under <code>/api/</code></li>
+  <li><code>initializeDatabase()</code> runs:
+    <ul>
+      <li>Creates all tables if they don't exist</li>
+      <li>Runs migrations for existing databases</li>
+      <li>Seeds superadmin account, categories, menu items, tables, and inventory (if first run)</li>
+    </ul>
+  </li>
+  <li>Express serves the built frontend from <code>frontend/build/</code></li>
+  <li>Server starts listening on port 3001</li>
+  <li>Two background schedulers start:
+    <ul>
+      <li><strong>Auto-close scheduler:</strong> Checks every 15 minutes, auto-closes previous days' open business days after 3 AM</li>
+      <li><strong>Backup scheduler:</strong> Creates a database backup every day at 4 AM</li>
+    </ul>
+  </li>
+</ol>
+
+<h1 id="s3">3. Authentication & Roles</h1>
+
+<h2>3.1 Authentication</h2>
+<p>Uses <strong>JWT (JSON Web Tokens)</strong> with a 24-hour expiry.</p>
+<ul>
+  <li><strong>Secret key:</strong> <code>cafe-software-secret-key-2026</code> (defined in <code>backend/middleware/auth.js</code>)</li>
+  <li>Token contains: <code>{ id, name, email, role }</code></li>
+  <li>On login, the token and employee info are stored in <code>localStorage</code></li>
+  <li>If a 401 or 403 response is received, <code>localStorage.clear()</code> is called and the user is redirected to <code>/login</code></li>
+</ul>
+
+<h2>3.2 Roles & Permissions</h2>
+<table>
+  <tr><th>Role</th><th>Permissions</th></tr>
+  <tr><td><strong>Super Admin</strong></td><td><strong>FULL ACCESS</strong> — all features including settings, password resets, employee management</td></tr>
+  <tr><td><strong>Admin</strong></td><td>POS, Orders (view+status), Menu (view+manage), Tables (view+manage), Reports, Inventory (view+manage), Employees, Accounting, Gaming, Business Day, Customers</td></tr>
+  <tr><td><strong>Manager</strong></td><td>POS, Orders (view+status), Menu (view), Tables (view+manage), Reports, Inventory (view), Accounting, Gaming, Business Day, Customers</td></tr>
+  <tr><td><strong>Cashier</strong></td><td>POS, Orders (view), Tables (view+manage), Gaming</td></tr>
+  <tr><td><strong>Waiter</strong></td><td>POS, Orders (view), Tables (view+manage), Gaming</td></tr>
+  <tr><td><strong>Kitchen</strong></td><td>Orders (view), Orders (update status)</td></tr>
+</table>
+
+<p><strong>Important:</strong> Only <strong>Super Admin</strong> can:</p>
+<ul>
+  <li>Delete employees</li>
+  <li>Reset employee passwords</li>
+  <li>Edit superadmin accounts</li>
+</ul>
+
+<h2>3.3 Login API</h2>
+<pre><code>POST /api/employees/login
+Body: { email, password }
+Response: { token, employee: { id, name, email, role } }</code></pre>
+<p>All other endpoints require the header: <code>Authorization: Bearer &lt;token&gt;</code></p>
+
+<h1 id="s4">4. POS (Point of Sale)</h1>
+
+<h2>4.1 Overview</h2>
+<p>The POS page (<code>/pos</code>) is the main order-taking interface. It supports:</p>
+<ul>
+  <li>Takeaway and Dine-In orders</li>
+  <li>Multi-tab ordering (unlimited simultaneous carts)</li>
+  <li>Split bill per person</li>
+  <li>Cash and Mobile payment</li>
+  <li>Open Tab (pay later)</li>
+  <li>Kitchen dispatch printing</li>
+  <li>Invoice printing</li>
+  <li><strong>Crash-safe draft saving</strong> (auto-saved to database)</li>
+</ul>
+
+<h2>4.2 Order Types</h2>
+<table>
+  <tr><th>Type</th><th>Description</th></tr>
+  <tr><td><strong>Takeaway</strong></td><td>Customer takes food to go. No table assignment.</td></tr>
+  <tr><td><strong>Dine-In</strong></td><td>Customer eats in the cafe. Requires table selection.</td></tr>
+</table>
+
+<h2>4.3 Multi-Tab Ordering</h2>
+<p>The POS supports <strong>unlimited independent order tabs</strong>. Each tab has its own:</p>
+<ul>
+  <li>Order type (Takeaway/Dine-In)</li>
+  <li>Table selection</li>
+  <li>Cart items</li>
+  <li>Discount</li>
+  <li>Notes</li>
+  <li>Persons (split bill)</li>
+  <li>Open order ID (for pay-later tabs)</li>
+</ul>
+<p><strong>How tabs work:</strong></p>
+<ul>
+  <li>Click "+ New Order" to add a tab</li>
+  <li>Click on a tab to switch to it</li>
+  <li>Tabs with items show a badge</li>
+  <li>Open tabs (pay-later) show a 📌 pin icon</li>
+</ul>
+
+<h2>4.4 Menu Selection Flow</h2>
+<ol>
+  <li>Select order type (Takeaway or Dine-In)</li>
+  <li>For Dine-In: select a table</li>
+  <li>Browse categories, click a category to see its items</li>
+  <li>Click items to add to cart</li>
+  <li>Click "← Back to Menu" to browse another category</li>
+</ol>
+
+<h2>4.5 Cart Operations</h2>
+<table>
+  <tr><th>Action</th><th>How</th></tr>
+  <tr><td><strong>Add item</strong></td><td>Click an item card (adds 1)</td></tr>
+  <tr><td><strong>Increase qty</strong></td><td>Click <code>+</code> button on the cart row</td></tr>
+  <tr><td><strong>Decrease qty</strong></td><td>Click <code>−</code> button (removes item at 0)</td></tr>
+  <tr><td><strong>Clear cart</strong></td><td>Click "🗑 Clear" button</td></tr>
+  <tr><td><strong>Set discount</strong></td><td>Enter dollar amount in discount field</td></tr>
+  <tr><td><strong>Add notes</strong></td><td>Type in the notes textarea</td></tr>
+</table>
+
+<h2>4.6 Split Bill (Per-Person Orders)</h2>
+<p><strong>Setup:</strong></p>
+<ol>
+  <li>Before adding items, type a person's name in the "Person name…" input</li>
+  <li>Click "+ Person" or press Enter</li>
+  <li>Repeat for each additional person</li>
+</ol>
+
+<p><strong>Assigning items to a person:</strong></p>
+<ol>
+  <li>Click on a person's chip in the persons strip (it highlights)</li>
+  <li>Any items you click get assigned to that person</li>
+  <li>Click the person chip again to deselect (items go unassigned)</li>
+</ol>
+
+<p><strong>Cart display:</strong></p>
+<ul>
+  <li>Items are grouped by person in the cart</li>
+  <li>Each group shows the person's name and running total</li>
+  <li>Each person has a "Pay Now" button for individual payment</li>
+  <li>Paid persons show with ✅ and "PAID" badge</li>
+</ul>
+
+<p><strong>During payment:</strong></p>
+<ul>
+  <li>You can pay for one person at a time</li>
+  <li>The remaining persons' items stay in the cart</li>
+  <li>The order stays open until all persons have paid</li>
+  <li>Or pay the full amount to complete the entire order</li>
+</ul>
+
+<h2>4.7 Payment Methods</h2>
+<table>
+  <tr><th>Method</th><th>Description</th></tr>
+  <tr><td><strong>Cash (💵)</strong></td><td>Record cash payment. Order completes immediately.</td></tr>
+  <tr><td><strong>Mobile (📱)</strong></td><td>WISH Money / mobile wallet payment. Shows QR code for customer to scan.</td></tr>
+</table>
+
+<p><strong>Mobile Payment Flow:</strong></p>
+<ol>
+  <li>Click "Pay Now" → select "Mobile" (📱)</li>
+  <li>A modal shows the cafe's WISH Money QR code</li>
+  <li>Customer scans and pays the exact amount</li>
+  <li>Staff confirms payment received → clicks "Payment Received — Complete Order"</li>
+  <li>Order is marked as paid and completed</li>
+</ol>
+
+<h2>4.8 Open Tab (Pay Later)</h2>
+<ul>
+  <li>For Dine-In orders where the customer will pay later</li>
+  <li>Creates the order with status "preparing" and payment "unpaid"</li>
+  <li>The tab shows a 📌 pin icon</li>
+  <li>The order appears on the Orders page and the Tables page for payment</li>
+  <li>Customer can pay later from the Orders page or Tables page</li>
+</ul>
+
+<h2>4.9 Kitchen Dispatch Printing</h2>
+<p>Prints a formatted kitchen ticket with:</p>
+<ul>
+  <li>Table number (or "TAKEWAY")</li>
+  <li>Items grouped by category</li>
+  <li>Quantities in large font</li>
+  <li>Special instructions/notes</li>
+  <li>Automatically triggers browser print dialog</li>
+</ul>
+
+<h2>4.10 Invoice Printing</h2>
+<p>Prints a formatted customer receipt with:</p>
+<ul>
+  <li>Cafe brand name</li>
+  <li>Invoice number (e.g., <code>#0001</code>)</li>
+  <li>Date and time</li>
+  <li>Employee name</li>
+  <li>Items with quantities and prices</li>
+  <li>Person labels for split orders</li>
+  <li>Subtotal, discount, total</li>
+  <li>Payment method</li>
+  <li>Thank you message</li>
+  <li>One-click browser print</li>
+</ul>
+
+<h1 id="s5">5. Gaming Page</h1>
+
+<h2>5.1 Overview</h2>
+<p>The Gaming page (<code>/gaming</code>) manages <strong>gaming station sessions</strong> (PlayStation, PC, Billiards, Babyfoot). Staff can:</p>
+<ul>
+  <li>Start/end sessions on gaming stations</li>
+  <li>Track session duration with a timer</li>
+  <li>Add food/drink items to the gaming tab</li>
+  <li>End session and automatically add session charges to the cart</li>
+  <li><strong>Crash-safe draft saving</strong> (auto-saved to database)</li>
+</ul>
+
+<h2>5.2 Station Types</h2>
+<table>
+  <tr><th>Type</th><th>Icon</th><th>Description</th></tr>
+  <tr><td>Playstation</td><td>🎮</td><td>Per-hour rate (billed in full hours)</td></tr>
+  <tr><td>PC</td><td>🖥</td><td>Per-hour rate (billed in full hours)</td></tr>
+  <tr><td>Billiards</td><td>🎱</td><td>Per-hour rate (billed in full hours)</td></tr>
+  <tr><td>Babyfoot</td><td>⚽</td><td>Per-session rate (billed as 1 hour minimum)</td></tr>
+</table>
+
+<h2>5.3 Starting a Session</h2>
+<ol>
+  <li>Navigate to the Gaming page</li>
+  <li>Click "▶ Start" on an available station</li>
+  <li>A session timer starts counting up</li>
+  <li>The session banner shows the station name and elapsed time</li>
+  <li>While the session is active, you can add food/drink items</li>
+</ol>
+
+<h2>5.4 Ending a Session</h2>
+<ol>
+  <li>Click "■ End" on the active station (or the End button in the banner)</li>
+  <li>The session calculates charges: <code>ceil(hours_elapsed) × hourly_rate</code></li>
+  <li>Babyfoot is billed as a flat 1-session charge</li>
+  <li>The session charge is added to the cart as an item</li>
+  <li>The station becomes available for the next customer</li>
+</ol>
+
+<h2>5.5 Gaming Tab Management</h2>
+<ul>
+  <li><strong>Multi-tab support</strong> — each tab can manage a different station</li>
+  <li>Stations in use by another tab are shown as "other tab" and cannot be started</li>
+  <li>"End All Sessions" button ends ALL active gaming sessions across all stations</li>
+</ul>
+
+<h2>5.6 Important Notes</h2>
+<ul>
+  <li><strong>Sessions can only be started/ended from the Gaming page</strong>, not the Tables page</li>
+  <li>The sidebar shows a pulsing green dot when any gaming session is active</li>
+  <li>When the timer reaches a new hour, a toast notification appears</li>
+  <li>When a gaming session is ended, the session charge appears in the cart as an "Entertainment" category item</li>
+</ul>
+
+<h1 id="s6">6. Orders Page</h1>
+
+<h2>6.1 Overview</h2>
+<p>The Orders page (<code>/orders</code>) shows all orders with filtering capabilities.</p>
+
+<h2>6.2 Filters</h2>
+<table>
+  <tr><th>Filter</th><th>Options</th></tr>
+  <tr><td><strong>Status</strong></td><td>All / Pending / Preparing / Ready / Completed / Cancelled</td></tr>
+  <tr><td><strong>Type</strong></td><td>All / Takeaway / Dine-In</td></tr>
+  <tr><td><strong>Date</strong></td><td>Today / Yesterday / This Week / Custom range (from/to)</td></tr>
+  <tr><td><strong>Print Report</strong></td><td>Generates a printable report of filtered orders</td></tr>
+</table>
+
+<h2>6.3 Order Statuses</h2>
+<table>
+  <tr><th>Status</th><th>Meaning</th><th>Color</th></tr>
+  <tr><td><strong>Pending</strong></td><td>Order received, not yet in preparation</td><td>Amber</td></tr>
+  <tr><td><strong>Preparing</strong></td><td>Kitchen is working on the order</td><td>Blue</td></tr>
+  <tr><td><strong>Ready</strong></td><td>Order is ready for pickup/serving</td><td>Green</td></tr>
+  <tr><td><strong>Completed</strong></td><td>Order paid and fulfilled</td><td>Gray</td></tr>
+  <tr><td><strong>Cancelled</strong></td><td>Order was cancelled</td><td>Red</td></tr>
+</table>
+
+<h2>6.4 Order Detail Panel</h2>
+<p>Clicking an order opens the detail panel showing:</p>
+<ul>
+  <li>Invoice number, type, table number</li>
+  <li>Employee who took the order</li>
+  <li>Current status with buttons to change it</li>
+  <li>All items with quantities and prices</li>
+  <li>Person/label info for split-bill orders</li>
+  <li>Subtotal, discount, total</li>
+  <li>Payment status</li>
+</ul>
+
+<p><strong>Actions in Detail Panel:</strong></p>
+<table>
+  <tr><th>Button</th><th>Description</th></tr>
+  <tr><td><strong>🖨️</strong></td><td>Print invoice</td></tr>
+  <tr><td><strong>📋</strong></td><td>Print kitchen dispatch</td></tr>
+  <tr><td><strong>✓ Mark Paid</strong></td><td>Quick mark as paid (if unpaid)</td></tr>
+  <tr><td><strong>↩ Unpaid</strong></td><td>Revert to unpaid (if paid in error)</td></tr>
+  <tr><td><strong>💳 Close & Pay</strong></td><td>Process payment</td></tr>
+  <tr><td><strong>Status buttons</strong></td><td>Change order status (Pending → Preparing → Ready → Completed)</td></tr>
+</table>
+
+<h2>6.5 Split Bill in Orders Page</h2>
+<p>For orders with split billing:</p>
+<ul>
+  <li>Each person is shown with their items and total</li>
+  <li>"Collect $XX" button per person to accept payment</li>
+  <li>Shows person as "✓ Paid" once paid</li>
+  <li>Remaining total updates automatically</li>
+</ul>
+
+<h1 id="s7">7. Menu Management</h1>
+
+<h2>7.1 Overview</h2>
+<p>The Menu page (<code>/menu</code>) manages the cafe's product catalog.</p>
+<p><strong>Permissions:</strong> Admin, Manager (view+edit), others (view only)</p>
+
+<h2>7.2 Categories</h2>
+<table>
+  <tr><th>Field</th><th>Description</th></tr>
+  <tr><td>Name</td><td>Category name (e.g., "Hot Drinks", "Cold Drinks")</td></tr>
+  <tr><td>Description</td><td>Optional category description</td></tr>
+  <tr><td>Icon</td><td>Emoji icon (80+ available icons in the icon picker)</td></tr>
+  <tr><td>Sort Order</td><td>Display order (lower numbers first)</td></tr>
+</table>
+
+<p><strong>Default Categories:</strong></p>
+<ol>
+  <li>Hot Drinks</li>
+  <li>Cold Drinks</li>
+  <li>Snacks</li>
+  <li>Entertainment</li>
+</ol>
+
+<h2>7.3 Menu Items</h2>
+<table>
+  <tr><th>Field</th><th>Description</th></tr>
+  <tr><td>Name</td><td>Item name</td></tr>
+  <tr><td>Description</td><td>Optional item description</td></tr>
+  <tr><td>Price</td><td>Selling price (in USD)</td></tr>
+  <tr><td>Category</td><td>Which category the item belongs to</td></tr>
+  <tr><td>Preparation Time</td><td>Minutes to prepare (shown on POS)</td></tr>
+  <tr><td>Available</td><td>Toggle to show/hide from POS</td></tr>
+  <tr><td>Track Stock</td><td>Enable stock tracking for this item</td></tr>
+  <tr><td>Stock Quantity</td><td>Current stock count</td></tr>
+  <tr><td>Cost</td><td>Cost per unit (for profit calculation)</td></tr>
+  <tr><td>Recipe</td><td>Link to inventory items (for COGS tracking)</td></tr>
+</table>
+
+<h2>7.4 Stock Tracking</h2>
+<p>When "Track Stock" is enabled for an item:</p>
+<ul>
+  <li>The POS shows remaining stock count</li>
+  <li>Items with 0 stock are grayed out and cannot be ordered</li>
+  <li>Stock decrements automatically when orders are placed</li>
+  <li>Stock restores when orders are cancelled</li>
+</ul>
+
+<h1 id="s8">8. Tables & Stations</h1>
+
+<h2>8.1 Overview</h2>
+<p>The Tables page (<code>/tables</code>) manages dining tables and gaming stations.</p>
+<p><strong>Permissions:</strong> Admin, Manager, Cashier, Waiter (manage)</p>
+
+<h2>8.2 Dining Tables</h2>
+<table>
+  <tr><th>Field</th><th>Description</th></tr>
+  <tr><td>Number</td><td>Table number</td></tr>
+  <tr><td>Seats</td><td>Maximum capacity</td></tr>
+  <tr><td>Section</td><td>Location (e.g., window, main)</td></tr>
+  <tr><td>Status</td><td>Available / Occupied / Reserved</td></tr>
+</table>
+
+<p><strong>Table Actions:</strong></p>
+<table>
+  <tr><th>Action</th><th>Description</th></tr>
+  <tr><td><strong>● Occupy</strong></td><td>Mark table as occupied (without an order)</td></tr>
+  <tr><td><strong>○ Free</strong></td><td>Release occupied table</td></tr>
+  <tr><td><strong>📅 Reserve</strong></td><td>Reserve for a guest (name + phone)</td></tr>
+  <tr><td><strong>Cancel Res.</strong></td><td>Cancel reservation</td></tr>
+  <tr><td><strong>💵 Pay</strong></td><td>Pay open orders at this table (Cash/Mobile)</td></tr>
+  <tr><td><strong>🗑 Delete</strong></td><td>Remove table (Admin only)</td></tr>
+</table>
+
+<h2>8.3 Gaming Stations</h2>
+<p>Gaming stations are shown in a separate section with a note:<br>"→ Gaming page" — sessions can only be started/ended from the Gaming page.</p>
+
+<table>
+  <tr><th>Type</th><th>Icon</th><th>Rate</th></tr>
+  <tr><td>Playstation</td><td>🎮</td><td>Per-hour</td></tr>
+  <tr><td>PC</td><td>🖥</td><td>Per-hour</td></tr>
+  <tr><td>Billiards</td><td>🎱</td><td>Per-hour</td></tr>
+  <tr><td>Babyfoot</td><td>⚽</td><td>Per-session</td></tr>
+</table>
+
+<h1 id="s9">9. Inventory</h1>
+
+<h2>9.1 Overview</h2>
+<p>The Inventory page (<code>/inventory</code>) manages stock levels of supplies.</p>
+<p><strong>Permissions:</strong> Admin, Manager (manage), others (view only)</p>
+
+<h2>9.2 Inventory Items</h2>
+<table>
+  <tr><th>Field</th><th>Description</th></tr>
+  <tr><td>Name</td><td>Item name (e.g., "Coffee Beans")</td></tr>
+  <tr><td>Quantity</td><td>Current stock level</td></tr>
+  <tr><td>Unit</td><td>Unit of measurement (e.g., grams, liters, pieces)</td></tr>
+  <tr><td>Min Quantity</td><td>Threshold for low-stock warning</td></tr>
+  <tr><td>Cost Per Unit</td><td>Purchase cost per unit</td></tr>
+</table>
+
+<h2>9.3 Stock Operations</h2>
+<table>
+  <tr><th>Action</th><th>Description</th></tr>
+  <tr><td><strong>Add Item</strong></td><td>Create a new inventory item</td></tr>
+  <tr><td><strong>Adjust</strong></td><td>Add or subtract stock (e.g., +5 or -2)</td></tr>
+  <tr><td><strong>Low Stock</strong></td><td>View all items below minimum quantity</td></tr>
+</table>
+
+<h1 id="s10">10. Reports & Accounting</h1>
+
+<h2>10.1 Overview</h2>
+<p>The Reports page (<code>/reports</code>) provides sales analytics. The Accounting page (<code>/accounting</code>) provides financial management.</p>
+
+<h2>10.2 Report Periods</h2>
+<table>
+  <tr><th>Period</th><th>Description</th></tr>
+  <tr><td><strong>Daily</strong></td><td>Select any date</td></tr>
+  <tr><td><strong>Weekly</strong></td><td>Current week (last 7 days)</td></tr>
+  <tr><td><strong>Monthly</strong></td><td>Select any month</td></tr>
+  <tr><td><strong>Custom Range</strong></td><td>Any from/to date range</td></tr>
+</table>
+
+<h2>10.3 Report Data</h2>
+<p>Each report shows:</p>
+<ul>
+  <li><strong>Total Orders</strong> count</li>
+  <li><strong>Total Revenue</strong> in USD</li>
+  <li><strong>Breakdown by type</strong> (Takeaway vs Dine-In)</li>
+  <li><strong>Daily Breakdown</strong> (for weekly/monthly/range)</li>
+  <li><strong>Sales by Item</strong> table (name, category, quantity, revenue)</li>
+  <li><strong>Hourly Sales</strong> (for daily reports)</li>
+  <li><strong>Print Report</strong> button for clean printable format</li>
+</ul>
+
+<h2>10.4 Accounting Tabs</h2>
+<table>
+  <tr><th>Tab</th><th>Description</th></tr>
+  <tr><td><strong>Overview</strong></td><td>Monthly overview with revenue, expenses, net profit</td></tr>
+  <tr><td><strong>Financial Summary</strong></td><td>Revenue data with item breakdown</td></tr>
+  <tr><td><strong>Expenses</strong></td><td>List and manage expenses</td></tr>
+  <tr><td><strong>Cash Flow</strong></td><td>Cash flow overview</td></tr>
+  <tr><td><strong>Net Profit</strong></td><td>Revenue - Cost analysis per item with margin %</td></tr>
+  <tr><td><strong>Mobile Pay QR</strong></td><td>Upload and manage mobile payment QR code</td></tr>
+</table>
+
+<h2>10.5 Net Profit Report</h2>
+<p>Shows profit breakdown per menu item:</p>
+<ul>
+  <li>Revenue per item</li>
+  <li>Total cost (quantity × cost per unit from menu items)</li>
+  <li>Net profit = Revenue - Cost</li>
+  <li>Profit margin percentage</li>
+  <li>Print button for clean report</li>
+</ul>
+
+<h1 id="s11">11. Business Day</h1>
+
+<h2>11.1 Overview</h2>
+<p>The Business Day system controls whether orders can be placed. When the day is closed, the system blocks order creation with an alert.</p>
+<p><strong>Permissions:</strong> Admin, Manager, Cashier</p>
+
+<h2>11.2 Opening the Day</h2>
+<ol>
+  <li>Go to Business Day page (<code>/business-day</code>)</li>
+  <li>Click "Open Day"</li>
+  <li>Optionally enter opening cash amount and notes</li>
+  <li>The day is now open — orders can be placed</li>
+</ol>
+
+<p><strong>When a day opens, the system automatically:</strong></p>
+<ol>
+  <li>Closes any other open days (prevents multiple open days)</li>
+  <li>Calculates closing cash for auto-closed days</li>
+  <li>Ends all active gaming sessions</li>
+  <li>Frees all occupied dining tables</li>
+  <li>Cancels all unpaid orders from previous days (restoring stock)</li>
+</ol>
+
+<h2>11.3 Closing the Day</h2>
+<ol>
+  <li>Go to Business Day page</li>
+  <li>Click "Close Day"</li>
+  <li>Optionally enter closing cash amount</li>
+  <li>The day is now closed</li>
+</ol>
+
+<h2>11.4 Auto-Close (3 AM)</h2>
+<p>Every day after 3 AM, the server automatically:</p>
+<ol>
+  <li>Closes any business days from previous dates that are still open</li>
+  <li>Calculates expected closing cash (opening cash + revenue)</li>
+  <li>Ends all active gaming sessions</li>
+  <li>Frees all occupied tables</li>
+  <li>Cancels unpaid orders from previous days</li>
+</ol>
+
+<h2>11.5 Auto-Close During the Day</h2>
+<p>If a day has been open for more than <strong>4 hours</strong> without manual interaction, the system will auto-close it (to prevent accidentally leaving days open overnight).</p>
+
+<h2>11.6 Expected Cash</h2>
+<p>The system calculates expected cash drawer amount: <code>opening_cash + revenue_from_paid_orders</code>.</p>
+
+<h1 id="s12">12. Employees</h1>
+
+<h2>12.1 Overview</h2>
+<p>The Employees page (<code>/employees</code>) manages staff accounts.</p>
+<p><strong>Permissions:</strong> Admin (manage), Manager (view), Super Admin (full + password reset)</p>
+
+<h2>12.2 Employee Fields</h2>
+<table>
+  <tr><th>Field</th><th>Description</th></tr>
+  <tr><td>Name</td><td>Full name</td></tr>
+  <tr><td>Email</td><td>Login email address</td></tr>
+  <tr><td>Password</td><td>Login password (only on create)</td></tr>
+  <tr><td>Role</td><td>cashier / waiter / kitchen / manager / admin</td></tr>
+  <tr><td>Phone</td><td>Optional phone number</td></tr>
+  <tr><td>Status</td><td>Active / Inactive (inactive users cannot log in)</td></tr>
+</table>
+
+<h2>12.3 Role Descriptions</h2>
+<table>
+  <tr><th>Role</th><th>Description</th></tr>
+  <tr><td><strong>Cashier</strong></td><td>POS · Orders · Tables · Gaming</td></tr>
+  <tr><td><strong>Waiter</strong></td><td>POS · Orders · Tables · Gaming</td></tr>
+  <tr><td><strong>Kitchen</strong></td><td>View Orders · Update Status</td></tr>
+  <tr><td><strong>Manager</strong></td><td>POS · Orders · Menu · Tables · Reports · Gaming · Inventory · Accounting</td></tr>
+  <tr><td><strong>Admin</strong></td><td>Full Access (excluding superadmin-only features)</td></tr>
+  <tr><td><strong>Super Admin</strong></td><td>Full Access — Settings, Users & Passwords</td></tr>
+</table>
+
+<h2>12.4 Super Admin Features</h2>
+<p>Only the <strong>Super Admin</strong> account can:</p>
+<ul>
+  <li><strong>Delete employees</strong></li>
+  <li><strong>Reset passwords</strong> for other employees</li>
+  <li>Access the <strong>Settings</strong> page</li>
+  <li>Edit other superadmin accounts</li>
+  <li>Cannot delete their own account</li>
+  <li>Cannot change their own role</li>
+</ul>
+
+<h1 id="s13">13. Customers</h1>
+
+<h2>13.1 Overview</h2>
+<p>The Customers page (<code>/customers</code>) manages customer records.</p>
+<p><strong>Permissions:</strong> Admin, Manager</p>
+
+<h2>13.2 Customer Fields</h2>
+<table>
+  <tr><th>Field</th><th>Description</th></tr>
+  <tr><td>Name</td><td>Customer name</td></tr>
+  <tr><td>Phone</td><td>Optional phone number</td></tr>
+  <tr><td>Email</td><td>Optional email address</td></tr>
+  <tr><td>Notes</td><td>Optional notes</td></tr>
+  <tr><td>Since</td><td>Auto-recorded creation date</td></tr>
+</table>
+
+<h2>13.3 Usage in POS</h2>
+<p>When adding persons to a split bill, customers from the database appear in a dropdown for quick selection.</p>
+
+<h1 id="s14">14. Expenses</h1>
+
+<h2>14.1 Overview</h2>
+<p>The Expenses section tracks business expenses.</p>
+<p><strong>Permissions:</strong> Admin, Manager (manage), others (view)</p>
+
+<h2>14.2 Expense Fields</h2>
+<table>
+  <tr><th>Field</th><th>Description</th></tr>
+  <tr><td>Category</td><td>Rent / Utilities / Salaries / Supplies / Maintenance / Other</td></tr>
+  <tr><td>Amount</td><td>Expense amount</td></tr>
+  <tr><td>Description</td><td>Optional description</td></tr>
+  <tr><td>Date</td><td>Expense date</td></tr>
+</table>
+
+<h2>14.3 Legacy Migration</h2>
+<p>On first load, any expenses stored in <code>localStorage</code> (<code>cafe_expenses</code>) are automatically migrated to the database.</p>
+
+<h1 id="s15">15. Settings & Branding</h1>
+
+<h2>15.1 Overview</h2>
+<p>The Settings page (<code>/settings</code>) allows customization of the cafe's branding.</p>
+<p><strong>Permissions:</strong> Super Admin only</p>
+
+<h2>15.2 Settings Available</h2>
+<table>
+  <tr><th>Setting</th><th>Description</th></tr>
+  <tr><td><strong>App Name</strong></td><td>Custom cafe name displayed throughout the system</td></tr>
+  <tr><td><strong>Color Theme</strong></td><td>8 selectable color presets (Café Classic, Coffee Roast, Soft Breeze, Blue Wave, Midnight, Forest, Sunset, Minimal)</td></tr>
+  <tr><td><strong>Language</strong></td><td>English / العربية</td></tr>
+</table>
+
+<h2>15.3 Theme Colors</h2>
+<p>Each preset defines: <code>primary</code>, <code>accent</code>, <code>bg</code>, <code>section</code>, <code>dark</code>, <code>medium</code>, <code>muted</code>, <code>border</code></p>
+
+<h1 id="s16">16. Crash Recovery</h1>
+
+<h2>16.1 Overview</h2>
+<p>The system has built-in crash recovery to prevent data loss when the laptop dies, browser closes, or server crashes.</p>
+
+<h2>16.2 Data Persistence Summary</h2>
+<table>
+  <tr><th>Data</th><th>Storage</th><th>Crash-Safe?</th></tr>
+  <tr><td>Completed orders</td><td>SQLite database</td><td><span class="badge badge-green">✅ Safe</span></td></tr>
+  <tr><td>Payments</td><td>SQLite database</td><td><span class="badge badge-green">✅ Safe</span></td></tr>
+  <tr><td>Menu items</td><td>SQLite database</td><td><span class="badge badge-green">✅ Safe</span></td></tr>
+  <tr><td>Inventory</td><td>SQLite database</td><td><span class="badge badge-green">✅ Safe</span></td></tr>
+  <tr><td>Employees</td><td>SQLite database</td><td><span class="badge badge-green">✅ Safe</span></td></tr>
+  <tr><td>Customers</td><td>SQLite database</td><td><span class="badge badge-green">✅ Safe</span></td></tr>
+  <tr><td>Business days</td><td>SQLite database</td><td><span class="badge badge-green">✅ Safe</span></td></tr>
+  <tr><td>Expenses</td><td>SQLite database</td><td><span class="badge badge-green">✅ Safe</span></td></tr>
+  <tr><td>Settings/QR code</td><td>SQLite database</td><td><span class="badge badge-green">✅ Safe</span></td></tr>
+  <tr><td>POS cart (in progress)</td><td>SQLite database (auto-saved)</td><td><span class="badge badge-green">✅ Safe</span></td></tr>
+  <tr><td>Gaming cart (in progress)</td><td>SQLite database (auto-saved)</td><td><span class="badge badge-green">✅ Safe</span></td></tr>
+  <tr><td>Gaming session</td><td>SQLite database (auto-saved)</td><td><span class="badge badge-green">✅ Safe</span></td></tr>
+  <tr><td>Auth token</td><td>localStorage</td><td><span class="badge badge-amber">⚠️ Re-login needed</span></td></tr>
+  <tr><td>Employee info</td><td>localStorage</td><td><span class="badge badge-amber">⚠️ Re-login needed</span></td></tr>
+  <tr><td>Language preference</td><td>localStorage</td><td><span class="badge badge-amber">⚠️ Defaults to English</span></td></tr>
+</table>
+
+<h2>16.3 Draft Auto-Save</h2>
+<p>Both <strong>POS</strong> and <strong>Gaming</strong> carts are automatically saved to the <code>pos_drafts</code> database table:</p>
+<ul>
+  <li>Saves every <strong>2 seconds</strong> (debounced) when the cart changes</li>
+  <li>Each employee has their own draft (per-employee saving)</li>
+  <li>Draft is <strong>deleted</strong> after successful payment</li>
+  <li>On page load, the draft is <strong>restored</strong> with a toast: "♻️ Restored your previous cart"</li>
+</ul>
+
+<p><strong>What's saved in the POS draft:</strong></p>
+<ul>
+  <li>Order type (Takeaway/Dine-In)</li>
+  <li>Selected table</li>
+  <li>Cart items with quantities and person assignments</li>
+  <li>Discount amount</li>
+  <li>Notes</li>
+  <li>Person names</li>
+  <li>Paid persons</li>
+</ul>
+
+<p><strong>What's saved in the Gaming draft:</strong></p>
+<ul>
+  <li>All gaming tabs and their carts</li>
+  <li>Active tab index</li>
+  <li>Active station session (station, start time, rate)</li>
+</ul>
+
+<h2>16.4 Server Crash Scenarios</h2>
+<table>
+  <tr><th>Scenario</th><th>Outcome</th></tr>
+  <tr><td>Server dies while browser is open</td><td>Cart stays in browser memory + localStorage. Once server restarts, everything works again.</td></tr>
+  <tr><td>Server dies + browser refreshed</td><td>Page won't load (server is down). Wait for restart, then draft is restored from DB.</td></tr>
+  <tr><td>Server dies mid-payment</td><td>If order was created: order exists in DB as pending/unpaid. Cart stays in browser. Can retry or pay via Orders page. If before order creation: nothing lost, cart preserved.</td></tr>
+  <tr><td>Laptop dies (complete power loss)</td><td>All DB data safe. POS/gaming drafts in DB. On restart, re-login → navigate to POS/Gaming → draft restored automatically.</td></tr>
+</table>
+
+<h1 id="s17">17. Database Schema</h1>
+
+<h2>17.1 Tables</h2>
+
+<h3>employees</h3>
+<pre><code>id            INTEGER PRIMARY KEY AUTOINCREMENT
+name          TEXT NOT NULL
+email         TEXT UNIQUE NOT NULL
+password      TEXT NOT NULL (bcrypt hashed)
+role          TEXT NOT NULL DEFAULT 'cashier'
+phone         TEXT
+is_active     INTEGER DEFAULT 1
+created_at    DATETIME DEFAULT CURRENT_TIMESTAMP</code></pre>
+
+<h3>categories</h3>
+<pre><code>id            INTEGER PRIMARY KEY AUTOINCREMENT
+name          TEXT NOT NULL
+description   TEXT
+sort_order    INTEGER DEFAULT 0
+icon          TEXT DEFAULT NULL (emoji character)</code></pre>
+
+<h3>menu_items</h3>
+<pre><code>id                INTEGER PRIMARY KEY AUTOINCREMENT
+name              TEXT NOT NULL
+description       TEXT
+price             REAL NOT NULL
+category_id       INTEGER → categories(id)
+image             TEXT
+is_available      INTEGER DEFAULT 1
+preparation_time  INTEGER DEFAULT 5
+created_at        DATETIME DEFAULT CURRENT_TIMESTAMP
+track_stock       INTEGER DEFAULT 0
+stock_quantity    INTEGER DEFAULT 0
+cost              REAL DEFAULT 0</code></pre>
+
+<h3>inventory</h3>
+<pre><code>id              INTEGER PRIMARY KEY AUTOINCREMENT
+name            TEXT NOT NULL
+quantity        REAL NOT NULL DEFAULT 0
+unit            TEXT NOT NULL
+min_quantity    REAL DEFAULT 10
+cost_per_unit   REAL DEFAULT 0
+updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP</code></pre>
+
+<h3>tables</h3>
+<pre><code>id                  INTEGER PRIMARY KEY AUTOINCREMENT
+number              INTEGER UNIQUE NOT NULL
+seats               INTEGER DEFAULT 4
+status              TEXT DEFAULT 'available'
+section             TEXT DEFAULT 'main'
+type                TEXT NOT NULL DEFAULT 'table'
+hourly_rate         REAL DEFAULT 0.0
+session_start       DATETIME DEFAULT NULL
+reservation_name    TEXT DEFAULT NULL
+reservation_phone   TEXT DEFAULT NULL</code></pre>
+
+<h3>orders</h3>
+<pre><code>id                INTEGER PRIMARY KEY AUTOINCREMENT
+invoice_number    INTEGER DEFAULT NULL
+order_type        TEXT NOT NULL DEFAULT 'takeaway'
+table_id          INTEGER → tables(id)
+employee_id       INTEGER → employees(id)
+status            TEXT DEFAULT 'pending'
+subtotal          REAL DEFAULT 0
+discount          REAL DEFAULT 0
+total             REAL DEFAULT 0
+payment_method    TEXT
+payment_status    TEXT DEFAULT 'unpaid'
+notes             TEXT
+created_at        DATETIME DEFAULT CURRENT_TIMESTAMP (LOCAL time)
+completed_at      DATETIME</code></pre>
+
+<h3>order_items</h3>
+<pre><code>id              INTEGER PRIMARY KEY AUTOINCREMENT
+order_id        INTEGER NOT NULL → orders(id)
+menu_item_id    INTEGER NOT NULL → menu_items(id)
+quantity        INTEGER NOT NULL DEFAULT 1
+unit_price      REAL NOT NULL
+total_price     REAL NOT NULL
+notes           TEXT
+person_label    TEXT DEFAULT NULL</code></pre>
+
+<h3>order_persons</h3>
+<pre><code>id              INTEGER PRIMARY KEY AUTOINCREMENT
+order_id        INTEGER NOT NULL → orders(id)
+label           TEXT NOT NULL
+paid            INTEGER DEFAULT 0
+paid_amount     REAL DEFAULT 0
+paid_method     TEXT
+paid_at         DATETIME</code></pre>
+
+<h3>business_days</h3>
+<pre><code>id              INTEGER PRIMARY KEY AUTOINCREMENT
+date            TEXT UNIQUE NOT NULL (YYYY-MM-DD)
+opened_at       DATETIME
+closed_at       DATETIME
+status          TEXT DEFAULT 'open'
+opening_cash    REAL DEFAULT 0
+closing_cash    REAL DEFAULT 0
+notes           TEXT</code></pre>
+
+<h3>customers</h3>
+<pre><code>id              INTEGER PRIMARY KEY AUTOINCREMENT
+name            TEXT NOT NULL
+phone           TEXT
+email           TEXT
+notes           TEXT
+created_at      DATETIME DEFAULT CURRENT_TIMESTAMP</code></pre>
+
+<h3>expenses</h3>
+<pre><code>id              INTEGER PRIMARY KEY AUTOINCREMENT
+category        TEXT NOT NULL
+amount          REAL NOT NULL
+description     TEXT DEFAULT ''
+date            TEXT NOT NULL
+employee_id     INTEGER → employees(id)
+created_at      DATETIME DEFAULT CURRENT_TIMESTAMP</code></pre>
+
+<h3>settings</h3>
+<pre><code>key             TEXT PRIMARY KEY
+value           TEXT
+updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP</code></pre>
+
+<h3>menu_inventory</h3>
+<pre><code>id                  INTEGER PRIMARY KEY AUTOINCREMENT
+menu_item_id        INTEGER NOT NULL → menu_items(id)
+inventory_item_id   INTEGER NOT NULL → inventory(id)
+quantity_needed     REAL NOT NULL DEFAULT 1</code></pre>
+
+<h3>pos_drafts</h3>
+<pre><code>id              INTEGER PRIMARY KEY AUTOINCREMENT
+employee_id     INTEGER NOT NULL → employees(id)
+draft_data      TEXT NOT NULL (JSON)
+updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP</code></pre>
+
+<h1 id="s18">18. API Reference</h1>
+
+<h2>18.1 Authentication</h2>
+<table>
+  <tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr>
+  <tr><td>POST</td><td><code>/api/employees/login</code></td><td>No</td><td>Login, returns JWT token</td></tr>
+</table>
+
+<h2>18.2 Employees</h2>
+<table>
+  <tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr>
+  <tr><td>GET</td><td><code>/api/employees</code></td><td>Admin+</td><td>List all employees</td></tr>
+  <tr><td>POST</td><td><code>/api/employees</code></td><td>Admin+</td><td>Create employee</td></tr>
+  <tr><td>PUT</td><td><code>/api/employees/:id</code></td><td>Admin+</td><td>Update employee</td></tr>
+  <tr><td>DELETE</td><td><code>/api/employees/:id</code></td><td>Super Admin</td><td>Delete employee</td></tr>
+  <tr><td>POST</td><td><code>/api/employees/:id/reset-password</code></td><td>Super Admin</td><td>Reset password</td></tr>
+</table>
+
+<h2>18.3 Menu</h2>
+<table>
+  <tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr>
+  <tr><td>GET</td><td><code>/api/menu/categories</code></td><td>No</td><td>List categories</td></tr>
+  <tr><td>POST</td><td><code>/api/menu/categories</code></td><td>Admin+</td><td>Create category</td></tr>
+  <tr><td>PUT</td><td><code>/api/menu/categories/:id</code></td><td>Admin+</td><td>Update category</td></tr>
+  <tr><td>DELETE</td><td><code>/api/menu/categories/:id</code></td><td>Admin+</td><td>Delete category</td></tr>
+  <tr><td>GET</td><td><code>/api/menu/items</code></td><td>No</td><td>List menu items</td></tr>
+  <tr><td>GET</td><td><code>/api/menu/items/:id</code></td><td>No</td><td>Get single item with recipe</td></tr>
+  <tr><td>POST</td><td><code>/api/menu/items</code></td><td>Admin+</td><td>Create item</td></tr>
+  <tr><td>PUT</td><td><code>/api/menu/items/:id</code></td><td>Admin+</td><td>Update item</td></tr>
+  <tr><td>DELETE</td><td><code>/api/menu/items/:id</code></td><td>Admin+</td><td>Delete item</td></tr>
+</table>
+
+<h2>18.4 Inventory</h2>
+<table>
+  <tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr>
+  <tr><td>GET</td><td><code>/api/inventory</code></td><td>Auth</td><td>List inventory</td></tr>
+  <tr><td>GET</td><td><code>/api/inventory/low</code></td><td>Auth</td><td>Low stock items</td></tr>
+  <tr><td>POST</td><td><code>/api/inventory</code></td><td>Admin+</td><td>Create inventory item</td></tr>
+  <tr><td>PUT</td><td><code>/api/inventory/:id</code></td><td>Admin+</td><td>Update item</td></tr>
+  <tr><td>POST</td><td><code>/api/inventory/:id/adjust</code></td><td>Auth</td><td>Adjust stock (+/-)</td></tr>
+  <tr><td>DELETE</td><td><code>/api/inventory/:id</code></td><td>Admin+</td><td>Delete item</td></tr>
+</table>
+
+<h2>18.5 Tables</h2>
+<table>
+  <tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr>
+  <tr><td>GET</td><td><code>/api/tables</code></td><td>Auth</td><td>List all tables</td></tr>
+  <tr><td>POST</td><td><code>/api/tables</code></td><td>Admin+</td><td>Create table</td></tr>
+  <tr><td>PUT</td><td><code>/api/tables/:id/status</code></td><td>Auth</td><td>Change status</td></tr>
+  <tr><td>PUT</td><td><code>/api/tables/:id/reserve</code></td><td>Auth</td><td>Reserve table</td></tr>
+  <tr><td>PUT</td><td><code>/api/tables/:id/cancel-reservation</code></td><td>Auth</td><td>Cancel reservation</td></tr>
+  <tr><td>POST</td><td><code>/api/tables/:id/start-session</code></td><td>Auth</td><td>Start gaming session</td></tr>
+  <tr><td>POST</td><td><code>/api/tables/:id/end-session</code></td><td>Auth</td><td>End gaming session</td></tr>
+  <tr><td>GET</td><td><code>/api/tables/gaming-sessions/active</code></td><td>Auth</td><td>List active sessions</td></tr>
+  <tr><td>POST</td><td><code>/api/tables/gaming-sessions/end-all</code></td><td>Manager+</td><td>End all sessions</td></tr>
+  <tr><td>DELETE</td><td><code>/api/tables/:id</code></td><td>Admin+</td><td>Delete table</td></tr>
+</table>
+
+<h2>18.6 Orders</h2>
+<table>
+  <tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr>
+  <tr><td>GET</td><td><code>/api/orders</code></td><td>Auth</td><td>List orders (with filters)</td></tr>
+  <tr><td>GET</td><td><code>/api/orders/:id</code></td><td>Auth</td><td>Get order with items + persons</td></tr>
+  <tr><td>POST</td><td><code>/api/orders</code></td><td>Auth</td><td>Create order</td></tr>
+  <tr><td>POST</td><td><code>/api/orders/:id/items</code></td><td>Auth</td><td>Add items to order</td></tr>
+  <tr><td>POST</td><td><code>/api/orders/:id/persons</code></td><td>Auth</td><td>Add person to order</td></tr>
+  <tr><td>PUT</td><td><code>/api/orders/:id/persons/:pid/pay</code></td><td>Auth</td><td>Pay person's share</td></tr>
+  <tr><td>PUT</td><td><code>/api/orders/:id/status</code></td><td>Auth</td><td>Update status</td></tr>
+  <tr><td>PUT</td><td><code>/api/orders/:id/payment</code></td><td>Auth</td><td>Process payment</td></tr>
+  <tr><td>PUT</td><td><code>/api/orders/:id/mark-paid</code></td><td>Auth</td><td>Quick mark as paid</td></tr>
+  <tr><td>PUT</td><td><code>/api/orders/:id/mark-unpaid</code></td><td>Auth</td><td>Revert to unpaid</td></tr>
+  <tr><td>DELETE</td><td><code>/api/orders/:id</code></td><td>Manager+</td><td>Delete order</td></tr>
+  <tr><td>GET</td><td><code>/api/orders/draft</code></td><td>Auth</td><td>Get saved draft</td></tr>
+  <tr><td>PUT</td><td><code>/api/orders/draft</code></td><td>Auth</td><td>Save/update draft</td></tr>
+  <tr><td>DELETE</td><td><code>/api/orders/draft</code></td><td>Auth</td><td>Delete draft</td></tr>
+</table>
+
+<h2>18.7 Reports</h2>
+<table>
+  <tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr>
+  <tr><td>GET</td><td><code>/api/reports/daily?date=YYYY-MM-DD</code></td><td>Auth</td><td>Daily report</td></tr>
+  <tr><td>GET</td><td><code>/api/reports/weekly</code></td><td>Auth</td><td>Weekly report</td></tr>
+  <tr><td>GET</td><td><code>/api/reports/monthly?month=YYYY-MM</code></td><td>Auth</td><td>Monthly report</td></tr>
+  <tr><td>GET</td><td><code>/api/reports/range?from=&to=</code></td><td>Auth</td><td>Custom range report</td></tr>
+  <tr><td>GET</td><td><code>/api/reports/net-profit?from=&to=</code></td><td>Auth</td><td>Net profit report</td></tr>
+  <tr><td>GET</td><td><code>/api/reports/employee</code></td><td>Manager+</td><td>Employee sales report</td></tr>
+</table>
+
+<h2>18.8 Business Day</h2>
+<table>
+  <tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr>
+  <tr><td>GET</td><td><code>/api/business-day/today</code></td><td>Auth</td><td>Get today's day status</td></tr>
+  <tr><td>GET</td><td><code>/api/business-day</code></td><td>Cashier+</td><td>Get day history</td></tr>
+  <tr><td>POST</td><td><code>/api/business-day/open</code></td><td>Cashier+</td><td>Open the day</td></tr>
+  <tr><td>POST</td><td><code>/api/business-day/close</code></td><td>Cashier+</td><td>Close the day</td></tr>
+  <tr><td>GET</td><td><code>/api/business-day/expected-cash</code></td><td>Auth</td><td>Expected cash calculation</td></tr>
+</table>
+
+<h2>18.9 Expenses</h2>
+<table>
+  <tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr>
+  <tr><td>GET</td><td><code>/api/expenses</code></td><td>Auth</td><td>List expenses (with filters)</td></tr>
+  <tr><td>GET</td><td><code>/api/expenses/:id</code></td><td>Auth</td><td>Get single expense</td></tr>
+  <tr><td>POST</td><td><code>/api/expenses</code></td><td>Auth</td><td>Create expense</td></tr>
+  <tr><td>POST</td><td><code>/api/expenses/bulk</code></td><td>Manager+</td><td>Bulk import expenses</td></tr>
+  <tr><td>PUT</td><td><code>/api/expenses/:id</code></td><td>Manager+</td><td>Update expense</td></tr>
+  <tr><td>DELETE</td><td><code>/api/expenses/:id</code></td><td>Manager+</td><td>Delete expense</td></tr>
+</table>
+
+<h2>18.10 Customers</h2>
+<table>
+  <tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr>
+  <tr><td>GET</td><td><code>/api/customers?search=</code></td><td>Auth</td><td>List/search customers</td></tr>
+  <tr><td>POST</td><td><code>/api/customers</code></td><td>Auth</td><td>Create customer</td></tr>
+  <tr><td>PUT</td><td><code>/api/customers/:id</code></td><td>Auth</td><td>Update customer</td></tr>
+  <tr><td>DELETE</td><td><code>/api/customers/:id</code></td><td>Auth</td><td>Delete customer</td></tr>
+</table>
+
+<h2>18.11 Settings</h2>
+<table>
+  <tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr>
+  <tr><td>GET</td><td><code>/api/settings/:key</code></td><td>Public*</td><td>Get setting value</td></tr>
+  <tr><td>PUT</td><td><code>/api/settings/:key</code></td><td>Manager+</td><td>Set setting value</td></tr>
+  <tr><td>POST</td><td><code>/api/settings/backup</code></td><td>Manager+</td><td>Create manual backup</td></tr>
+  <tr><td>GET</td><td><code>/api/settings/backups</code></td><td>Auth</td><td>List backups</td></tr>
+  <tr><td>POST</td><td><code>/api/settings/backup/restore</code></td><td>Manager+</td><td>Restore from backup</td></tr>
+</table>
+<p><em>*Public keys (app_name, color_preset, logo) can be read without authentication</em></p>
+
+<h1 id="s19">19. Maintenance & Backups</h1>
+
+<h2>19.1 Automatic Backups</h2>
+<p>The system automatically creates a database backup every day at <strong>4 AM</strong>:</p>
+<ul>
+  <li>Backup files are stored in <code>backend/backups/</code></li>
+  <li>Filename format: <code>cafe-backup-YYYY-MM-DDTHHMM.db</code></li>
+  <li>Keeps the <strong>newest 30 backups</strong> (oldest are automatically deleted)</li>
+  <li>WAL checkpoint runs before backup for a consistent snapshot</li>
+</ul>
+
+<h2>19.2 Manual Backup</h2>
+<ol>
+  <li>Go to Settings page</li>
+  <li>Click "Create Backup"</li>
+  <li>A timestamped backup file is created immediately</li>
+</ol>
+
+<h2>19.3 Manual Restore</h2>
+<ol>
+  <li>Go to Settings page</li>
+  <li>Find the backup in the list</li>
+  <li>Click "Restore" next to the desired backup</li>
+  <li>A <strong>safety backup</strong> of the current database is created before restoring</li>
+  <li>If restore fails, the system automatically recovers from the safety backup</li>
+</ol>
+
+<h2>19.4 Scheduler (Auto-Close)</h2>
+<p>The auto-close scheduler runs every 15 minutes:</p>
+<ul>
+  <li>After 3 AM: automatically closes any previous days' open business days</li>
+  <li>Frees occupied tables and gaming stations</li>
+  <li>Cancels unpaid orders from previous days (restoring stock)</li>
+  <li>Auto-closes days that have been open for more than 4 hours</li>
+</ul>
+
+<h2>19.5 Database Location</h2>
+<p>The database file is at: <code>backend/database/cafe.db</code></p>
+<p><strong>Important:</strong> To make a manual backup, copy this file while the server is running — WAL mode allows reads during writes. For maximum safety, use the built-in backup system instead.</p>
+
+<h1 id="appendices">Appendices</h1>
+
+<h2>A. Default Menu Items</h2>
+<table>
+  <tr><th>Item</th><th>Category</th><th>Price</th></tr>
+  <tr><td>Tea</td><td>Hot Drinks</td><td>$1.50</td></tr>
+  <tr><td>Turkish Coffee</td><td>Hot Drinks</td><td>$2.00</td></tr>
+  <tr><td>Cappuccino</td><td>Hot Drinks</td><td>$3.50</td></tr>
+  <tr><td>Nescafe</td><td>Hot Drinks</td><td>$2.50</td></tr>
+  <tr><td>Espresso</td><td>Hot Drinks</td><td>$2.00</td></tr>
+  <tr><td>Hot Chocolate</td><td>Hot Drinks</td><td>$3.00</td></tr>
+  <tr><td>Latte</td><td>Hot Drinks</td><td>$3.50</td></tr>
+  <tr><td>Mineral Water</td><td>Cold Drinks</td><td>$1.00</td></tr>
+  <tr><td>Coca Cola</td><td>Cold Drinks</td><td>$2.00</td></tr>
+  <tr><td>Fresh Orange Juice</td><td>Cold Drinks</td><td>$4.00</td></tr>
+  <tr><td>Lemonade</td><td>Cold Drinks</td><td>$3.50</td></tr>
+  <tr><td>Iced Coffee</td><td>Cold Drinks</td><td>$3.50</td></tr>
+  <tr><td>Laziza Drink</td><td>Cold Drinks</td><td>$3.00</td></tr>
+  <tr><td>Potato Chips</td><td>Snacks</td><td>$1.50</td></tr>
+  <tr><td>Cookies</td><td>Snacks</td><td>$2.00</td></tr>
+  <tr><td>Peanuts</td><td>Snacks</td><td>$1.50</td></tr>
+  <tr><td>Sandwich</td><td>Snacks</td><td>$5.00</td></tr>
+  <tr><td>Croissant</td><td>Snacks</td><td>$2.50</td></tr>
+  <tr><td>Playstation Time</td><td>Entertainment</td><td>$5.00/hr</td></tr>
+  <tr><td>PC Time</td><td>Entertainment</td><td>$3.00/hr</td></tr>
+  <tr><td>Billiards Time</td><td>Entertainment</td><td>$8.00/hr</td></tr>
+  <tr><td>Babyfoot Session</td><td>Entertainment</td><td>$2.00/session</td></tr>
+</table>
+
+<h2>B. Default Inventory</h2>
+<table>
+  <tr><th>Item</th><th>Quantity</th><th>Unit</th></tr>
+  <tr><td>Coffee Beans</td><td>5000</td><td>grams</td></tr>
+  <tr><td>Milk</td><td>20</td><td>liters</td></tr>
+  <tr><td>Sugar</td><td>3000</td><td>grams</td></tr>
+  <tr><td>Cups (Small)</td><td>200</td><td>pieces</td></tr>
+  <tr><td>Cups (Large)</td><td>150</td><td>pieces</td></tr>
+  <tr><td>Tea Bags</td><td>100</td><td>pieces</td></tr>
+</table>
+
+<h2>C. Default Tables</h2>
+<table>
+  <tr><th>#</th><th>Type</th><th>Seats</th><th>Section</th><th>Rate</th></tr>
+  <tr><td>1</td><td>Table</td><td>2</td><td>Window</td><td>—</td></tr>
+  <tr><td>2</td><td>Table</td><td>2</td><td>Window</td><td>—</td></tr>
+  <tr><td>3</td><td>Table</td><td>4</td><td>Main</td><td>—</td></tr>
+  <tr><td>4</td><td>Table</td><td>4</td><td>Main</td><td>—</td></tr>
+  <tr><td>5</td><td>Table</td><td>6</td><td>Main</td><td>—</td></tr>
+  <tr><td>6</td><td>Playstation</td><td>2</td><td>Gaming</td><td>$5.00/hr</td></tr>
+  <tr><td>7</td><td>Playstation</td><td>2</td><td>Gaming</td><td>$5.00/hr</td></tr>
+  <tr><td>8</td><td>PC</td><td>1</td><td>PC Zone</td><td>$3.00/hr</td></tr>
+  <tr><td>9</td><td>PC</td><td>1</td><td>PC Zone</td><td>$3.00/hr</td></tr>
+  <tr><td>10</td><td>Billiards</td><td>2</td><td>Lounge</td><td>$8.00/hr</td></tr>
+  <tr><td>11</td><td>Babyfoot</td><td>2</td><td>Lounge</td><td>$2.00/session</td></tr>
+</table>
+
+<h2>D. Color Presets</h2>
+<table>
+  <tr><th>Preset</th><th>Primary</th><th>Accent</th><th>Vibe</th></tr>
+  <tr><td>Café Classic</td><td><code>#6f4e37</code></td><td><code>#d4a574</code></td><td>Warm browns & cream</td></tr>
+  <tr><td>Coffee Roast</td><td><code>#4a3520</code></td><td><code>#c47e35</code></td><td>Rich dark coffee tones</td></tr>
+  <tr><td>Soft Breeze</td><td><code>#7c9eb2</code></td><td><code>#b8d4e3</code></td><td>Light airy pastels</td></tr>
+  <tr><td>Blue Wave</td><td><code>#1a5f7a</code></td><td><code>#4a9bbf</code></td><td>Deep ocean blues</td></tr>
+  <tr><td>Midnight</td><td><code>#1a1a2e</code></td><td><code>#e94560</code></td><td>Dark & dramatic</td></tr>
+  <tr><td>Forest</td><td><code>#2d5a27</code></td><td><code>#8fc27e</code></td><td>Natural greens</td></tr>
+  <tr><td>Sunset</td><td><code>#c96b3e</code></td><td><code>#f4a460</code></td><td>Warm oranges</td></tr>
+  <tr><td>Minimal</td><td><code>#333333</code></td><td><code>#666666</code></td><td>Clean & simple</td></tr>
+</table>
+
+<div class="footer">
+  <p>Cue Corner v4.0 — Complete System Documentation</p>
+  <p>Generated from the codebase &bull; June 2026</p>
+  <p>For support: <a href="https://techmindset-lb.com/">Tech Mindset Lb</a></p>
+</div>
+
+<div class="no-print" style="margin-top:20px">
+  <button onclick="window.print()">🖨️ Print / Save as PDF</button>
+  <p style="font-size:10pt;color:#666;margin-top:8px">Click the button above, then choose "Save as PDF" in the print dialog.</p>
+</div>
+
+</body>
+</html>
