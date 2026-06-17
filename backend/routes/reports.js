@@ -92,6 +92,43 @@ router.get('/monthly', authenticateToken, async (req, res) => {
   } catch(e){ res.status(500).json({error:e.message}); }
 });
 
+// GET /net-profit?from=YYYY-MM-DD&to=YYYY-MM-DD
+router.get('/net-profit', authenticateToken, async (req, res) => {
+  const { from, to } = req.query;
+  if (!from || !to) return res.status(400).json({ error: 'from and to are required' });
+  try {
+    const rows = await allAsync(`
+      SELECT
+        mi.id, mi.name, mi.cost as unit_cost,
+        c.name as category,
+        SUM(oi.quantity) as total_quantity,
+        SUM(oi.total_price) as total_revenue,
+        SUM(oi.quantity * COALESCE(mi.cost, 0)) as total_cost,
+        SUM(oi.total_price) - SUM(oi.quantity * COALESCE(mi.cost, 0)) as net_profit
+      FROM order_items oi
+      JOIN menu_items mi ON oi.menu_item_id = mi.id
+      LEFT JOIN categories c ON mi.category_id = c.id
+      JOIN orders o ON oi.order_id = o.id
+      WHERE DATE(o.created_at) >= ? AND DATE(o.created_at) <= ? AND o.status != 'cancelled'
+      GROUP BY oi.menu_item_id
+      ORDER BY net_profit DESC
+    `, [from, to]);
+
+    const summary = await getAsync(`
+      SELECT
+        COALESCE(SUM(oi.total_price), 0) as total_revenue,
+        COALESCE(SUM(oi.quantity * COALESCE(mi.cost, 0)), 0) as total_cost,
+        COALESCE(SUM(oi.total_price), 0) - COALESCE(SUM(oi.quantity * COALESCE(mi.cost, 0)), 0) as total_net_profit
+      FROM order_items oi
+      JOIN menu_items mi ON oi.menu_item_id = mi.id
+      JOIN orders o ON oi.order_id = o.id
+      WHERE DATE(o.created_at) >= ? AND DATE(o.created_at) <= ? AND o.status != 'cancelled'
+    `, [from, to]);
+
+    res.json({ from, to, ...summary, items: rows });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // GET /employee
 router.get('/employee', authenticateToken, authorizeRoles('superadmin','admin','manager'), async (req, res) => {
   try {

@@ -84,6 +84,7 @@ export const reportsAPI = {
   getWeekly: () => api.get('/reports/weekly'),
   getMonthly: () => api.get('/reports/monthly'),
   getEmployeeSales: () => api.get('/reports/employee'),
+  getNetProfit: (from, to) => api.get('/reports/net-profit', { params: { from, to } }),
 };
 
 export default api;

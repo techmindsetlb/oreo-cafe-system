@@ -68,13 +68,13 @@ router.get('/items/:id', async (req, res) => {
 });
 
 router.post('/items', authenticateToken, authorizeRoles('superadmin', 'admin', 'manager'), async (req, res) => {
-  const { name, description, price, category_id, image, preparation_time, recipe, track_stock, stock_quantity } = req.body;
+  const { name, description, price, category_id, image, preparation_time, recipe, track_stock, stock_quantity, cost } = req.body;
   if (!name || price === undefined) return res.status(400).json({ error: 'Name and price required' });
 
   try {
     const result = await runAsync(
-      'INSERT INTO menu_items (name, description, price, category_id, image, preparation_time, track_stock, stock_quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [name, description || null, price, category_id || null, image || null, preparation_time || 5, track_stock ? 1 : 0, track_stock ? (stock_quantity || 0) : 0]
+      'INSERT INTO menu_items (name, description, price, category_id, image, preparation_time, track_stock, stock_quantity, cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [name, description || null, price, category_id || null, image || null, preparation_time || 5, track_stock ? 1 : 0, track_stock ? (stock_quantity || 0) : 0, cost || 0]
     );
 
     const itemId = result.lastID;
@@ -89,7 +89,7 @@ router.post('/items', authenticateToken, authorizeRoles('superadmin', 'admin', '
 });
 
 router.put('/items/:id', authenticateToken, authorizeRoles('superadmin', 'admin', 'manager'), async (req, res) => {
-  const { name, description, price, category_id, image, is_available, preparation_time, recipe, track_stock, stock_quantity } = req.body;
+  const { name, description, price, category_id, image, is_available, preparation_time, recipe, track_stock, stock_quantity, cost } = req.body;
   try {
     // If track_stock is explicitly provided, handle it; otherwise leave as-is
     let trackSql = '', trackParams = [];
@@ -107,9 +107,10 @@ router.put('/items/:id', authenticateToken, authorizeRoles('superadmin', 'admin'
     await runAsync(`
       UPDATE menu_items SET name = COALESCE(?, name), description = COALESCE(?, description),
       price = COALESCE(?, price), category_id = COALESCE(?, category_id), image = COALESCE(?, image),
-      is_available = COALESCE(?, is_available), preparation_time = COALESCE(?, preparation_time)
+      is_available = COALESCE(?, is_available), preparation_time = COALESCE(?, preparation_time),
+      cost = COALESCE(?, cost)
       ${trackSql} WHERE id = ?
-    `, [name, description, price, category_id, image, is_available, preparation_time, ...trackParams, req.params.id]);
+    `, [name, description, price, category_id, image, is_available, preparation_time, cost, ...trackParams, req.params.id]);
 
     if (recipe) {
       await runAsync('DELETE FROM menu_inventory WHERE menu_item_id = ?', [req.params.id]);

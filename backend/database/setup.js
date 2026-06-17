@@ -135,6 +135,7 @@ async function initializeDatabase() {
     'ALTER TABLE categories ADD COLUMN icon TEXT DEFAULT NULL',
     'ALTER TABLE menu_items ADD COLUMN track_stock INTEGER DEFAULT 0',
     'ALTER TABLE menu_items ADD COLUMN stock_quantity INTEGER DEFAULT 0',
+    'ALTER TABLE menu_items ADD COLUMN cost REAL DEFAULT 0',
   ];
   for (const m of migrations) { try { await runAsync(m); } catch {} }
 
