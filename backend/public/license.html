@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>License Activation - Cafe Manager</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e0e0e0;
+    }
+    .container {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 48px;
+      max-width: 520px;
+      width: 90%;
+      text-align: center;
+    }
+    .logo {
+      font-size: 48px;
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #fff;
+    }
+    .subtitle {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    .status-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+    .value {
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      color: #e2e8f0;
+      word-break: break-all;
+      background: rgba(0,0,0,0.3);
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-top: 4px;
+      user-select: all;
+    }
+    .reason {
+      color: #f87171;
+      font-size: 14px;
+      margin: 12px 0;
+    }
+    .instructions {
+      text-align: left;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #94a3b8;
+      margin: 20px 0;
+    }
+    .instructions ol {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+    .instructions li {
+      margin-bottom: 6px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 32px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: #3b82f6;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2563eb;
+      transform: translateY(-1px);
+    }
+    .file-input-wrapper {
+      margin-top: 16px;
+    }
+    .file-input-wrapper input[type="file"] {
+      display: none;
+    }
+    .file-label {
+      display: inline-block;
+      padding: 10px 24px;
+      background: rgba(59,130,246,0.15);
+      border: 1px dashed rgba(59,130,246,0.4);
+      border-radius: 8px;
+      color: #60a5fa;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .file-label:hover {
+      background: rgba(59,130,246,0.25);
+      border-color: #3b82f6;
+    }
+    #file-name {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 8px;
+    }
+    .success-msg {
+      color: #34d399;
+      font-size: 14px;
+      margin-top: 12px;
+    }
+    .footer {
+      margin-top: 24px;
+      font-size: 11px;
+      color: #475569;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">☕</div>
+    <h1>License Required</h1>
+    <p class="subtitle">Cafe Manager needs a valid license to start</p>
+
+    <div id="status-area">
+      <div class="status-box">
+        <div class="label">Your Hardware ID</div>
+        <div class="value" id="hardware-id">Loading...</div>
+      </div>
+
+      <div id="error-reason" class="reason"></div>
+    </div>
+
+    <div class="instructions">
+      <strong>How to activate:</strong>
+      <ol>
+        <li>Copy the <strong>Hardware ID</strong> above</li>
+        <li>Send it to your software provider via email or WhatsApp</li>
+        <li>They will send you back a <strong>.lic</strong> file</li>
+        <li>Drop the <strong>.lic</strong> file below or into the app folder</li>
+      </ol>
+    </div>
+
+    <div class="file-input-wrapper">
+      <label class="file-label" id="file-label">
+        📄 Choose license file (.lic)
+        <input type="file" id="license-file" accept=".lic">
+      </label>
+      <div id="file-name"></div>
+    </div>
+
+    <div id="result-area"></div>
+
+    <div class="footer">
+      Cafe Manager &copy; 2026 &middot; All rights reserved
+    </div>
+  </div>
+
+  <script>
+    async function loadStatus() {
+      try {
+        const res = await fetch('/api/license/status');
+        const data = await res.json();
+        document.getElementById('hardware-id').textContent = data.hardware_id || 'Unknown';
+        if (data.reason) {
+          document.getElementById('error-reason').textContent = '❌ ' + data.reason;
+        }
+      } catch {
+        document.getElementById('hardware-id').textContent = 'Could not detect';
+      }
+    }
+
+    document.getElementById('license-file').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      document.getElementById('file-name').textContent = '📄 ' + file.name;
+      document.getElementById('result-area').innerHTML = '<p style="color:#94a3b8">Verifying license...</p>';
+
+      const formData = new FormData();
+      formData.append('license', file);
+
+      try {
+        const res = await fetch('/api/license/activate', {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          document.getElementById('result-area').innerHTML =
+            '<p class="success-msg">✅ License activated! Refresh the page to start.</p>' +
+            '<button class="btn btn-primary" style="margin-top:12px" onclick="location.reload()">Refresh & Start</button>';
+        } else {
+          document.getElementById('result-area').innerHTML =
+            '<p class="reason">❌ ' + data.reason + '</p>';
+        }
+      } catch {
+        document.getElementById('result-area').innerHTML =
+          '<p class="reason">❌ Could not connect to server</p>';
+      }
+    });
+
+    loadStatus();
+
+    // Auto-refresh every 5 seconds in case license was placed manually
+    setInterval(() => {
+      fetch('/api/license/status')
+        .then(r => r.json())
+        .then(d => {
+          if (d.valid) location.reload();
+        })
+        .catch(() => {});
+    }, 5000);
+  </script>
+</body>
+</html>

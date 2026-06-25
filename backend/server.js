@@ -2,13 +2,77 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
 const { initializeDatabase, getAsync, allAsync, runAsync } = require('./database/setup');
+const { checkLicenseFile, getHardwareId, verifyLicense } = require('./license');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json({ limit: '5mb' }));  // Allow large QR image uploads
+
+// ── License check: verify on every non-license API request ──
+app.use(/^\/api\/(?!license\/).*/, (req, res, next) => {
+  const status = checkLicenseFile();
+  if (!status.valid) {
+    return res.status(403).json({
+      error: 'License required',
+      reason: status.reason,
+      hardware_id: status.localId || getHardwareId(),
+    });
+  }
+  next();
+});
+
+// ── License API routes (always accessible) ──
+app.get('/api/license/status', (req, res) => {
+  const status = checkLicenseFile();
+  res.json({
+    valid: status.valid,
+    reason: status.reason,
+    hardware_id: status.localId || getHardwareId(),
+    ...(status.valid ? {
+      client_name: status.client_name,
+      expires_at: status.expires_at,
+      days_remaining: status.days_remaining,
+    } : {}),
+  });
+});
+
+const upload = multer({ storage: multer.memoryStorage() });
+app.post('/api/license/activate', upload.single('license'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, reason: 'No file uploaded' });
+    }
+
+    const content = req.file.buffer.toString('utf8');
+    // Validate it's valid JSON and properly signed before saving
+    let data;
+    try { data = JSON.parse(content); } catch {
+      return res.status(400).json({ success: false, reason: 'Invalid license file format' });
+    }
+
+    if (!data.signature) {
+      return res.status(400).json({ success: false, reason: 'Invalid license file (no signature)' });
+    }
+
+    // Skip anti-tamper check during activation (no check file exists yet)
+    const result = verifyLicense(data, true);
+    if (!result.valid) {
+      return res.status(400).json({ success: false, reason: result.reason });
+    }
+
+    // Save to the app root
+    const dest = path.join(__dirname, '..', 'license.lic');
+    fs.writeFileSync(dest, content);
+
+    res.json({ success: true, ...result });
+  } catch (err) {
+    res.status(500).json({ success: false, reason: err.message });
+  }
+});
 
 app.use('/api/employees',    require('./routes/employees'));
 app.use('/api/menu',         require('./routes/menu'));
@@ -25,22 +89,48 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// ── Serve built frontend (production mode, no dev server needed) ──
-const frontendBuild = path.join(__dirname, '..', 'frontend', 'build');
-if (fs.existsSync(frontendBuild)) {
+// ── Serve license activation page or built frontend ──
+const publicDir = path.join(__dirname, 'public');
+app.use('/license', express.static(publicDir));
+
+// When running from source: ../frontend/build
+// When compiled with pkg: ./public/build (bundled by build-exe.js)
+const frontendBuild =
+  fs.existsSync(path.join(__dirname, '..', 'frontend', 'build'))
+    ? path.join(__dirname, '..', 'frontend', 'build')
+    : path.join(__dirname, 'public', 'build');
+const hasFrontend = fs.existsSync(frontendBuild);
+
+if (hasFrontend) {
   app.use(express.static(frontendBuild));
-  // Return JSON 404 for unmatched API routes
-  app.get('/api/*', (req, res) => {
-    res.status(404).json({ error: 'API endpoint not found' });
-  });
-  // Catch-all for client-side routing (React Router)
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(frontendBuild, 'index.html'));
-  });
   console.log('✓ Serving built frontend from ' + frontendBuild);
 } else {
   console.log('⚠ Frontend build not found — run "cd frontend && npm run build"');
 }
+
+// ── Return JSON 404 for unmatched API routes ──
+app.get('/api/*', (req, res) => {
+  res.status(404).json({ error: 'API endpoint not found' });
+});
+
+// ── Catch-all: check license before serving app ──
+app.get('*', (req, res) => {
+  // Don't intercept /license or /api paths
+  if (req.path.startsWith('/license') || req.path.startsWith('/api')) return;
+
+  const licStatus = checkLicenseFile();
+  if (!licStatus.valid) {
+    // Serve license activation page instead of the app
+    return res.sendFile(path.join(publicDir, 'license.html'));
+  }
+
+  // Serve the main app
+  if (hasFrontend) {
+    res.sendFile(path.join(frontendBuild, 'index.html'));
+  } else {
+    res.status(503).send('App not built yet. Run: cd frontend && npm run build');
+  }
+});
 
 // ── Auto-close previous business days at 3 AM ──────────────────────
 // Runs every 15 minutes. If it's past 3 AM local time, any business day

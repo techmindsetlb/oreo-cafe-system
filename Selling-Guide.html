@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cafe Manager — Seller's Guide</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+      color: #1e293b;
+      background: #f8fafc;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Cover ── */
+    .cover {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f3460 100%);
+      color: #fff;
+      padding: 80px 24px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 40%, rgba(59,130,246,0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .cover .logo { font-size: 64px; margin-bottom: 8px; }
+    .cover h1 { font-size: 40px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .cover .subtitle { font-size: 18px; color: #94a3b8; font-weight: 400; margin-bottom: 24px; }
+    .cover .tag {
+      display: inline-block;
+      background: rgba(59,130,246,0.2);
+      color: #60a5fa;
+      padding: 6px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .cover .version { font-size: 13px; color: #64748b; margin-top: 24px; }
+    .cover .meta {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Table of Contents ── */
+    .toc {
+      background: #fff;
+      border-radius: 16px;
+      padding: 40px 48px;
+      margin: -40px 24px 40px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      position: relative;
+      z-index: 2;
+    }
+    .toc h2 { font-size: 18px; margin-bottom: 20px; color: #0f172a; }
+    .toc ol { list-style: none; counter-reset: toc-counter; }
+    .toc ol li { counter-increment: toc-counter; margin-bottom: 8px; position: relative; padding-left: 36px; }
+    .toc ol li::before {
+      content: counter(toc-counter);
+      position: absolute; left: 0; top: 0;
+      width: 24px; height: 24px;
+      background: #3b82f6; color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+    }
+    .toc ol li a { color: #3b82f6; text-decoration: none; font-weight: 500; }
+    .toc ol li a:hover { text-decoration: underline; }
+    .toc ol li span { color: #64748b; font-size: 13px; display: block; margin-left: 0; }
+
+    /* ── Sections ── */
+    .section {
+      background: #fff;
+      border-radius: 16px;
+      padding: 40px 48px;
+      margin: 24px 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      page-break-inside: avoid;
+    }
+    .section h2 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section h2 .num {
+      display: inline-flex;
+      width: 36px; height: 36px;
+      background: #3b82f6; color: #fff;
+      border-radius: 10px;
+      align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .section .divider {
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, transparent);
+      margin: 12px 0 24px;
+      border-radius: 2px;
+    }
+    .section p { margin-bottom: 16px; color: #334155; }
+    .section p:last-child { margin-bottom: 0; }
+
+    /* ── Sub-sections ── */
+    h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 28px 0 12px;
+    }
+    h3:first-child { margin-top: 0; }
+    h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 20px 0 8px;
+    }
+
+    /* ── Steps / Lists ── */
+    ol.steps, ul.bullets { padding-left: 24px; margin: 12px 0 16px; }
+    ol.steps li, ul.bullets li { margin-bottom: 8px; }
+    ol.steps li::marker { font-weight: 700; color: #3b82f6; }
+    ul.bullets li::marker { color: #3b82f6; }
+
+    /* ── Code blocks ── */
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 12px 0 16px;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .code-block .comment { color: #64748b; }
+    .code-block .cmd { color: #34d399; }
+    .code-block .path { color: #60a5fa; }
+    .code-block .output { color: #94a3b8; }
+    .code-inline {
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'Consolas', monospace;
+      font-size: 13px;
+    }
+
+    /* ── Info boxes ── */
+    .info-box {
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      border-left: 4px solid;
+      font-size: 14px;
+    }
+    .info-box.tip { background: #f0fdf4; border-color: #22c55e; color: #166534; }
+    .info-box.warning { background: #fefce8; border-color: #eab308; color: #854d0e; }
+    .info-box.danger { background: #fef2f2; border-color: #ef4444; color: #991b1b; }
+    .info-box.info { background: #eff6ff; border-color: #3b82f6; color: #1e40af; }
+    .info-box strong { display: block; margin-bottom: 4px; font-size: 14px; }
+
+    /* ── Tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    thead th {
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 700;
+      text-align: left;
+      padding: 10px 14px;
+      border-bottom: 2px solid #e2e8f0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    tbody td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #f8fafc; }
+
+    /* ── Workflow ── */
+    .workflow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0;
+      align-items: center;
+    }
+    .workflow .step {
+      background: #eff6ff;
+      color: #1e40af;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid #bfdbfe;
+    }
+    .workflow .arrow { color: #94a3b8; font-size: 18px; font-weight: 300; }
+
+    /* ── Pricing table ── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .pricing-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    .pricing-card h4 { font-size: 18px; margin: 0 0 4px; }
+    .pricing-card .price { font-size: 32px; font-weight: 800; color: #0f172a; margin: 8px 0; }
+    .pricing-card .price span { font-size: 16px; font-weight: 400; color: #64748b; }
+    .pricing-card ul { list-style: none; padding: 0; margin: 12px 0; }
+    .pricing-card ul li { padding: 4px 0; font-size: 13px; color: #475569; }
+    .pricing-card ul li::before { content: '✓ '; color: #22c55e; font-weight: 700; }
+    .pricing-card.recommended {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+      position: relative;
+    }
+    .pricing-card.recommended::after {
+      content: 'Recommended';
+      position: absolute;
+      top: -10px; left: 50%;
+      transform: translateX(-50%);
+      background: #3b82f6; color: #fff;
+      font-size: 11px; font-weight: 700;
+      padding: 2px 12px;
+      border-radius: 10px;
+    }
+
+    /* ── File tree ── */
+    .file-tree {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-family: 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      margin: 12px 0;
+    }
+    .file-tree .folder { color: #3b82f6; }
+    .file-tree .file { color: #334155; }
+    .file-tree .arrow { color: #94a3b8; }
+
+    /* ── Print-specific ── */
+    @media print {
+      body { background: #fff; font-size: 13px; }
+      .cover { padding: 40px 24px; }
+      .toc, .section { box-shadow: none; border: 1px solid #e2e8f0; margin: 12px 24px; }
+      .code-block { background: #f1f5f9; color: #0f172a; }
+      .code-block .comment { color: #94a3b8; }
+      .code-block .cmd { color: #059669; }
+      .code-block .path { color: #2563eb; }
+      .code-block .output { color: #64748b; }
+      .pricing-card.recommended { box-shadow: none; }
+      .workflow .step { background: #f1f5f9; color: #0f172a; }
+      .info-box { break-inside: avoid; }
+      .section { break-inside: avoid; }
+      .cover { break-after: page; }
+      .toc { break-after: page; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ COVER ═══════════════════ -->
+<div class="cover">
+  <div class="meta">
+    <div class="logo">☕</div>
+    <h1>Cafe Manager<br>Seller's Guide</h1>
+    <p class="subtitle">From Zero to Selling — The Complete A–Z Playbook</p>
+    <span class="tag">📦 v4.0 &middot; Offline License System</span>
+    <div class="version">Last updated: June 2026</div>
+  </div>
+</div>
+
+<!-- ═══════════════════ TOC ═══════════════════ -->
+<div class="toc">
+  <h2>📋 Table of Contents</h2>
+  <ol>
+    <li>
+      <a href="#s1">Understanding Your Product</a>
+      <span>What you're selling and how it works</span>
+    </li>
+    <li>
+      <a href="#s2">One-Time Setup (Your Computer)</a>
+      <span>Generate keys, build frontend, create dist package</span>
+    </li>
+    <li>
+      <a href="#s3">The License System Explained</a>
+      <span>Hardware IDs, signed files, expiry, anti-tamper</span>
+    </li>
+    <li>
+      <a href="#s4">Onboarding Your First Client</a>
+      <span>Step by step from first contact to running system</span>
+    </li>
+    <li>
+      <a href="#s5">Managing Subscriptions &amp; Renewals</a>
+      <span>Pricing models, renewal workflow, non-payment</span>
+    </li>
+    <li>
+      <a href="#s6">Building &amp; Distributing Updates</a>
+      <span>Rebuilding the package, sending updates to clients</span>
+    </li>
+    <li>
+      <a href="#s7">Anti-Piracy &amp; Code Protection</a>
+      <span>Obfuscation, .exe compilation, tamper detection</span>
+    </li>
+    <li>
+      <a href="#s8">Client Support &amp; Troubleshooting</a>
+      <span>Common issues, FAQ, support workflow</span>
+    </li>
+    <li>
+      <a href="#s9">Business Operations</a>
+      <span>Pricing strategy, record-keeping, scaling</span>
+    </li>
+    <li>
+      <a href="#s10">Quick Reference</a>
+      <span>Cheat sheet for daily operations</span>
+    </li>
+  </ol>
+</div>
+
+<!-- ═══════════════════ SECTION 1 ═══════════════════ -->
+<div id="s1" class="section">
+  <h2><span class="num">1</span> Understanding Your Product</h2>
+  <div class="divider"></div>
+
+  <h3>What Is Cafe Manager?</h3>
+  <p>
+    Cafe Manager is a complete cafe/restaurant management system that runs
+    <strong>entirely offline</strong> on a single Windows PC. It includes:
+  </p>
+  <ul class="bullets">
+    <li><strong>POS (Point of Sale)</strong> — Take orders, split bills, print receipts</li>
+    <li><strong>Order Management</strong> — View, update, and track orders in real time</li>
+    <li><strong>Menu Builder</strong> — Categories and items with stock tracking</li>
+    <li><strong>Inventory</strong> — Track ingredients, set minimum levels</li>
+    <li><strong>Table Management</strong> — Regular tables + gaming stations (PlayStation, PC, billiards)</li>
+    <li><strong>Employee Management</strong> — Roles: admin, manager, cashier, waiter, kitchen</li>
+    <li><strong>Reports &amp; Accounting</strong> — Daily/weekly/monthly sales, expenses, net profit</li>
+    <li><strong>Business Day</strong> — Open/close cash register with history</li>
+    <li><strong>Customer Database</strong> — Track customer info and history</li>
+  </ul>
+
+  <h3>How the Licensing Works</h3>
+  <p>
+    Every installation is locked to a specific computer using a <strong>hardware fingerprint</strong>
+    (CPU, RAM, MAC addresses, motherboard UUID). A license file (<code class="code-inline">.lic</code>)
+    is cryptographically signed with <strong>RSA-4096</strong> (military-grade encryption) and can
+    only be generated by <em>you</em> using your private key.
+  </p>
+  <div class="workflow">
+    <span class="step">📋 Client runs app</span>
+    <span class="arrow">→</span>
+    <span class="step">🔑 Gets Hardware ID</span>
+    <span class="arrow">→</span>
+    <span class="step">📤 Sends to you</span>
+    <span class="arrow">→</span>
+    <span class="step">✍️ You generate .lic</span>
+    <span class="arrow">→</span>
+    <span class="step">📥 Client activates</span>
+    <span class="arrow">→</span>
+    <span class="step">✅ App unlocks</span>
+  </div>
+
+  <h3>What the Client Gets</h3>
+  <ul class="bullets">
+    <li>A folder called <strong>CafeManager-Portable</strong> (15–20 MB)</li>
+    <li>Double-click <strong>"Start Cafe Manager.bat"</strong> to run</li>
+    <li>Opens in their browser at <code class="code-inline">http://localhost:3001</code></li>
+    <li>No internet required (ever)</li>
+    <li>No Node.js installation needed</li>
+    <li>Database stored locally in a <code class="code-inline">data/</code> folder</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════ SECTION 2 ═══════════════════ -->
+<div id="s2" class="section">
+  <h2><span class="num">2</span> One-Time Setup (Your Computer)</h2>
+  <div class="divider"></div>
+  <p>
+    These steps only need to be done once. After this, you can generate licenses and
+    build distribution packages whenever you need.
+  </p>
+
+  <h3>Step 2.1 — Generate Your RSA Key Pair</h3>
+  <div class="info-box info">
+    <strong>🔐 This is the most important step.</strong>
+    Your private key is what makes your license system secure. Anyone with your private key
+    can forge licenses. Keep it safe.
+  </div>
+  <div class="code-block">
+    <span class="comment"># Navigate to the license-tool folder</span>
+    <span class="cmd">cd</span> license-tool
+
+    <span class="comment"># Generate RSA-4096 key pair</span>
+    <span class="cmd">node</span> generate-keys.js
+
+    <span class="output">
+✅ RSA key pair generated!
+   private.pem → KEEP SECRET (use to sign licenses)
+   public.pem  → EMBED IN APP (use to verify licenses)</span>
+  </div>
+  <p>This creates two files in <code class="code-inline">license-tool/</code>:</p>
+  <table>
+    <thead>
+      <tr><th>File</th><th>What it is</th><th>Must Never Share</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>private.pem</code></td><td>Your secret signing key</td><td>✅ Never share</td></tr>
+      <tr><td><code>public.pem</code></td><td>Verification key (embedded in app)</td><td>❌ Safe to embed</td></tr>
+    </tbody>
+  </table>
+
+  <div class="info-box danger">
+    <strong>⚠️ BACKUP YOUR PRIVATE KEY!</strong>
+    Copy <code>private.pem</code> to a USB drive, cloud storage (encrypted!), or print it as a QR code.
+    <strong>If you lose it, you cannot generate new licenses.</strong>
+  </div>
+
+  <h3>Step 2.2 — Build the React Frontend</h3>
+  <p>The frontend needs to be compiled from React source into static HTML/JS files.</p>
+  <div class="code-block">
+    <span class="cmd">cd</span> frontend
+    <span class="cmd">npm install</span>                  <span class="comment"># Only needed once</span>
+    <span class="cmd">npm run build</span>                <span class="comment"># Creates frontend/build/</span>
+  </div>
+
+  <h3>Step 2.3 — Create the Distribution Package</h3>
+  <p>This packages everything your client needs into a single folder:</p>
+  <div class="code-block">
+    <span class="comment"># From the project root</span>
+    <span class="cmd">node</span> scripts/package-dist.js
+  </div>
+  <p>This creates <code class="code-inline">dist/CafeManager-Portable/</code> with:</p>
+  <div class="file-tree">
+    <span class="folder">CafeManager-Portable/</span><br>
+    ├── <span class="file">Start Cafe Manager.bat</span>     ← Client double-clicks this<br>
+    ├── <span class="file">README.txt</span>                   ← Simple instructions<br>
+    ├── <span class="folder">backend/</span><br>
+    │   ├── <span class="file">server.js</span> (obfuscated)<br>
+    │   ├── <span class="file">license.js</span> (obfuscated)<br>
+    │   ├── <span class="folder">routes/</span><br>
+    │   ├── <span class="folder">database/</span><br>
+    │   └── <span class="folder">node_modules/</span><br>
+    └── <span class="folder">frontend/</span><br>
+        └── <span class="folder">build/</span>                     ← Compiled React app
+  </div>
+
+  <div class="info-box tip">
+    <strong>💡 Where to find things:</strong>
+    The distribution package is at
+    <code class="code-inline">dist/CafeManager-Portable/</code>.
+    Zip this entire folder to send to clients.
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 3 ═══════════════════ -->
+<div id="s3" class="section">
+  <h2><span class="num">3</span> The License System Explained</h2>
+  <div class="divider"></div>
+
+  <h3>How It Works (Technical)</h3>
+  <ol class="steps">
+    <li><strong>Hardware Fingerprinting</strong> — On first run, the app reads CPU model, RAM, MAC addresses, and motherboard UUID to create a unique 32-character Hardware ID.</li>
+    <li><strong>License File (.lic)</strong> — A signed JSON file containing the hardware ID, client name, expiry date, and an RSA-4096 digital signature.</li>
+    <li><strong>Signature Verification</strong> — The app uses the embedded public key to verify the signature. If the signature doesn't match, the license is rejected.</li>
+    <li><strong>Machine Locking</strong> — The hardware ID in the license must match the local machine's fingerprint. Copying a license to another PC won't work.</li>
+    <li><strong>Expiry Enforcement</strong> — The app checks the expiry date on every request. Past the date = locked out.</li>
+    <li><strong>Clock Tamper Detection</strong> — If someone moves their system clock backward, the app detects the time drift and blocks access.</li>
+  </ol>
+
+  <h3>Anatomy of a License File</h3>
+  <div class="code-block">
+{
+  <span class="comment">// Identifies the client's machine</span>
+  "hardware_id": "0635f0ca89f1f5b305e48b4ce501be1b",
+
+  <span class="comment">// Your client's name (for your records)</span>
+  "client_name": "Joe's Cafe",
+
+  <span class="comment">// When you issued it</span>
+  "issued_at": "2026-06-25",
+
+  <span class="comment">// When it expires (they can't use it after this date)</span>
+  "expires_at": "2026-09-23",
+
+  <span class="comment">// Version (reserved for future use)</span>
+  "version": 1,
+
+  <span class="comment">// RSA-4096 signature — this is what prevents forgery</span>
+  "signature": "H9f8G7h6J5k4L3m2N1b0V9c8X7d6E5f4..."
+}
+  </div>
+
+  <h3>What Happens Without a License</h3>
+  <ul class="bullets">
+    <li>The app starts but shows a <strong>"License Required"</strong> page</li>
+    <li>The client's <strong>Hardware ID</strong> is displayed prominently</li>
+    <li>All API endpoints return <strong>403 Forbidden</strong></li>
+    <li>The client can upload a <code class="code-inline">.lic</code> file directly through the browser</li>
+    <li>Once a valid license is detected, the app unlocks completely</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════ SECTION 4 ═══════════════════ -->
+<div id="s4" class="section">
+  <h2><span class="num">4</span> Onboarding Your First Client</h2>
+  <div class="divider"></div>
+  <p>
+    This is the full flow from the moment a client agrees to buy your software.
+    Follow these steps in order.
+  </p>
+
+  <h3>Phase A: Client Gets the Software</h3>
+  <ol class="steps">
+    <li><strong>Zip the distribution package</strong> — Right-click
+      <code class="code-inline">dist/CafeManager-Portable/</code> → "Compress to ZIP"
+      or use any archiver. The zip will be about 10–15 MB.</li>
+    <li><strong>Send it to the client</strong> — Via email, Google Drive, WeTransfer,
+      or USB stick. The client does not need internet to <em>use</em> the app, but they
+      need internet to <em>receive</em> the files.</li>
+    <li><strong>Client unzips</strong> — Anywhere on their PC (Desktop, C:\Program Files, etc.).</li>
+    <li><strong>Client double-clicks</strong> <code>Start Cafe Manager.bat</code>.</li>
+    <li><strong>A browser opens</strong> at <code class="code-inline">http://localhost:3001</code>
+      showing the <strong>License Required</strong> page.</li>
+  </ol>
+
+  <h3>Phase B: Client Gets Their Hardware ID</h3>
+  <ol class="steps">
+    <li>On the activation page, the <strong>Hardware ID</strong> is shown in a box.
+      It looks like: <code>0635f0ca89f1f5b305e48b4ce501be1b</code></li>
+    <li>The client copies this ID and sends it to you via email, WhatsApp, SMS, etc.</li>
+    <li>Tell the client to leave the server running.</li>
+  </ol>
+
+  <div class="info-box tip">
+    <strong>💡 Pro tip:</strong> Ask the client to send you a screenshot of the activation page.
+    That way you can see both the Hardware ID and confirm they reached the right page.
+  </div>
+
+  <h3>Phase C: You Generate the License</h3>
+  <ol class="steps">
+    <li>Open a terminal/command prompt on <strong>YOUR</strong> computer.</li>
+    <li>Navigate to the project's <code class="code-inline">license-tool/</code> folder.</li>
+    <li>Run the license creator:
+      <div class="code-block">
+        <span class="cmd">node</span> create-license.js
+      </div>
+    </li>
+    <li>Enter the details when prompted:
+      <div class="code-block">
+╔══════════════════════════════════════════╗
+║     Cafe Manager - License Creator       ║
+╚══════════════════════════════════════════╝
+
+Enter hardware ID from client: <span class="cmd">0635f0ca89f1f5b305e48b4ce501be1b</span>
+Enter client name (e.g. "Joe's Cafe"): <span class="cmd">Joe's Cafe</span>
+Expiry (date like "2026-12-31" or days like "30"): <span class="cmd">90</span>
+
+✅ License created: Joe_s_Cafe.lic
+   Client:     Joe's Cafe
+   Hardware:   0635f0ca89f1f5b305e48b4ce501be1b
+   Expires:    2026-09-23
+   File:       /path/to/Joe_s_Cafe.lic
+
+📤 Send this .lic file to your client.
+      </div>
+    </li>
+  </ol>
+
+  <div class="info-box warning">
+    <strong>⚠️ Expiry formats you can use:</strong>
+    <ul class="bullets">
+      <li><code class="code-inline">30</code> — 30 days from today</li>
+      <li><code class="code-inline">90</code> — 90 days from today</li>
+      <li><code class="code-inline">365</code> — 1 year from today</li>
+      <li><code class="code-inline">2027-12-31</code> — Specific date (YYYY-MM-DD format)</li>
+    </ul>
+  </div>
+
+  <h3>Phase D: Client Activates</h3>
+  <ol class="steps">
+    <li>Send the <code class="code-inline">.lic</code> file to the client (email, WhatsApp).</li>
+    <li>The client has <strong>two ways to activate</strong>:
+
+      <h4>Method 1: Through the browser (easiest)</h4>
+      <ul class="bullets">
+        <li>On the activation page, click <strong>"Choose license file (.lic)"</strong></li>
+        <li>Select the <code class="code-inline">.lic</code> file from their computer</li>
+        <li>The page shows <strong>"✅ License activated! Refresh the page to start."</strong></li>
+        <li>Refresh the page → The full Cafe Manager app loads!</li>
+      </ul>
+
+      <h4>Method 2: Drop it in the folder</h4>
+      <ul class="bullets">
+        <li>Place the <code class="code-inline">.lic</code> file directly inside the
+          <code>CafeManager-Portable/</code> folder</li>
+        <li>Restart the app (close the command window and double-click the .bat again)</li>
+      </ul>
+    </li>
+  </ol>
+
+  <h3>Phase E: First Use</h3>
+  <ol class="steps">
+    <li>The app shows a login page.</li>
+    <li>Default credentials:
+      <div class="code-block">
+Email:    <span class="cmd">admin@cafe.com</span>
+Password: <span class="cmd">admin123</span>
+      </div>
+    </li>
+    <li><strong>Tell the client to change the admin password immediately!</strong>
+      Go to Employees page → Edit the admin user → Change password.</li>
+    <li>Guide the client through initial setup:
+      <ul class="bullets">
+        <li>Go to <strong>Menu</strong> → review/add menu items and prices</li>
+        <li>Go to <strong>Tables</strong> → configure their table layout</li>
+        <li>Go to <strong>Employees</strong> → add staff accounts</li>
+        <li>Go to <strong>Inventory</strong> → set up stock items</li>
+        <li>Go to <strong>Business Day</strong> → open the first business day</li>
+      </ul>
+    </li>
+  </ol>
+</div>
+
+<!-- ═══════════════════ SECTION 5 ═══════════════════ -->
+<div id="s5" class="section">
+  <h2><span class="num">5</span> Managing Subscriptions &amp; Renewals</h2>
+  <div class="divider"></div>
+
+  <h3>Pricing Models</h3>
+  <p>Here are common pricing models you can use. The system supports any of them equally well:</p>
+
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <h4>Monthly</h4>
+      <div class="price">$29<span>/mo</span></div>
+      <ul>
+        <li>Full features</li>
+        <li>Email support</li>
+        <li>Monthly renewal</li>
+      </ul>
+    </div>
+    <div class="pricing-card recommended">
+      <h4>Quarterly</h4>
+      <div class="price">$79<span>/3mo</span></div>
+      <ul>
+        <li>Full features</li>
+        <li>Priority support</li>
+        <li>Quarterly renewal</li>
+        <li>Best value</li>
+      </ul>
+    </div>
+    <div class="pricing-card">
+      <h4>Yearly</h4>
+      <div class="price">$249<span>/yr</span></div>
+      <ul>
+        <li>Full features</li>
+        <li>Priority support</li>
+        <li>Annual renewal</li>
+        <li>Best discount</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Renewal Workflow</h3>
+  <p>When a client's license is approaching expiry or has expired:</p>
+
+  <ol class="steps">
+    <li><strong>Client contacts you</strong> — They see "License expired on [date]" when trying to use the app. They email or message you.</li>
+    <li><strong>Client sends their Hardware ID</strong> — It's still displayed on the expired license page. (The hardware ID doesn't change, so you can also keep it in your records.)</li>
+    <li><strong>You verify payment</strong> — Check that they've paid for the renewal period.</li>
+    <li><strong>You generate a new license</strong> — Same process as before:
+      <div class="code-block">
+        <span class="cmd">cd</span> license-tool
+        <span class="cmd">node</span> create-license.js
+
+<span class="comment"># Enter same Hardware ID, same client name, new expiry</span>
+      </div>
+    </li>
+    <li><strong>Send the new .lic file</strong> — The client replaces the old one in their app folder and restarts the app.</li>
+  </ol>
+
+  <div class="info-box tip">
+    <strong>💡 Keep a client spreadsheet:</strong>
+    Track each client's name, hardware ID, license file name, issue date, and expiry date.
+    When they contact you for renewal, you already have their hardware ID ready.
+  </div>
+
+  <h3>Handling Non-Payment</h3>
+  <p>When a client doesn't renew:</p>
+  <ul class="bullets">
+    <li><strong>Don't send a new license file</strong> — Simple as that. The old one expires on its own.</li>
+    <li>The app becomes unusable (shows "License Required" page).</li>
+    <li>The client's data <strong>remains intact</strong> in the database. If they pay later, a new license will restore access with all their data.</li>
+    <li>There's no way for the client to bypass the expiry without a signed license from you.</li>
+  </ul>
+
+  <h3>Offering a Trial</h3>
+  <p>Want to let clients try before they buy?</p>
+  <ul class="bullets">
+    <li>Generate a license with a short expiry like <code class="code-inline">7</code> (7 days) or <code class="code-inline">14</code> (14 days)</li>
+    <li>Send it to the prospect. They activate it just like a paid license.</li>
+    <li>When it expires, they either buy or lose access.</li>
+    <li>No need to change anything in the app — the license system handles it all.</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════ SECTION 6 ═══════════════════ -->
+<div id="s6" class="section">
+  <h2><span class="num">6</span> Building &amp; Distributing Updates</h2>
+  <div class="divider"></div>
+
+  <h3>When You Release an Update</h3>
+  <p>When you make improvements or fix bugs, you need to rebuild the distribution package and send it to your clients.</p>
+
+  <ol class="steps">
+    <li><strong>Make your changes</strong> — Edit the source code in <code class="code-inline">backend/</code> and <code class="code-inline">frontend/</code>.</li>
+    <li><strong>Rebuild the frontend</strong>:
+      <div class="code-block">
+        <span class="cmd">cd</span> frontend
+        <span class="cmd">npm run build</span>
+      </div>
+    </li>
+    <li><strong>Rebuild the distribution package</strong>:
+      <div class="code-block">
+        <span class="cmd">cd</span> ..<span class="comment">  (back to project root)</span>
+        <span class="cmd">node</span> scripts/package-dist.js
+      </div>
+    </li>
+    <li><strong>Send the new folder</strong> to your clients (or just the changed files if you want to be selective).</li>
+  </ol>
+
+  <div class="info-box warning">
+    <strong>⚠️ Client data is NOT affected by updates.</strong>
+    The database is stored in <code class="code-inline">backend/database/cafe.db</code> (inside their app folder).
+    As long as the client replaces the backend files but keeps the database, all their data is safe.
+    <strong>Always tell clients to backup their database before updating!</strong>
+  </div>
+
+  <h3>What to Update: Full vs. Partial</h3>
+  <table>
+    <thead>
+      <tr><th>You changed…</th><th>Send client…</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Backend code (routes, license, server)</td>
+        <td>Entire <code class="code-inline">backend/</code> folder (but keep database)</td>
+      </tr>
+      <tr>
+        <td>Frontend (UI, pages, styles)</td>
+        <td>Entire <code class="code-inline">frontend/build/</code> folder</td>
+      </tr>
+      <tr>
+        <td>Both</td>
+        <td>Entire distribution package (fresh install)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box tip">
+    <strong>💡 For minor updates:</strong>
+    You can just ZIP the new <code class="code-inline">dist/CafeManager-Portable/</code>
+    folder and send it. The client unzips it somewhere new, copies their
+    <code class="code-inline">license.lic</code> and
+    <code class="code-inline">backend/database/cafe.db</code> from the old install, and they're good to go.
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 7 ═══════════════════ -->
+<div id="s7" class="section">
+  <h2><span class="num">7</span> Anti-Piracy &amp; Code Protection</h2>
+  <div class="divider"></div>
+
+  <h3>The Protection Layers</h3>
+  <p>Your software has multiple layers of protection. Each layer makes it harder for someone to steal or resell your work.</p>
+
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>What It Does</th><th>Bypass Difficulty</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1. Code Obfuscation</strong></td>
+        <td>Scrambles variable names, flattens control flow, strings are encrypted. Makes the source code unreadable.</td>
+        <td>⭐⭐ Medium — Determined hackers can reverse it</td>
+      </tr>
+      <tr>
+        <td><strong>2. RSA-4096 Signatures</strong></td>
+        <td>License files must be digitally signed by your private key. Forging a signature is computationally infeasible.</td>
+        <td>⭐⭐⭐⭐⭐ Impossible — Would take centuries to crack</td>
+      </tr>
+      <tr>
+        <td><strong>3. Hardware Locking</strong></td>
+        <td>License only works on the specific machine it was issued for. Can't copy licenses between computers.</td>
+        <td>⭐⭐⭐⭐ Very hard — Would need to spoof hardware IDs</td>
+      </tr>
+      <tr>
+        <td><strong>4. Clock Tamper Detection</strong></td>
+        <td>Detects if someone moves their system clock backward to extend the license.</td>
+        <td>⭐⭐⭐ Hard — Can be bypassed by freezing the clock before starting the app</td>
+      </tr>
+      <tr>
+        <td><strong>5. .exe Compilation (optional)</strong></td>
+        <td>Compiles everything into a single .exe. Much harder to extract code from a compiled binary than from plain .js files.</td>
+        <td>⭐⭐⭐⭐ Very hard — but not impossible</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box info">
+    <strong>📌 The Important Truth:</strong>
+    No offline software is 100% piracy-proof. If it runs on someone else's machine,
+    they technically have the code. The goal is to make stealing it <strong>harder and
+    more expensive</strong> than just paying you. For a cafe owner paying $29/month,
+    hiring someone to crack the software would cost way more.
+  </div>
+
+  <h3>What Can't Be Protected Against (And That's OK)</h3>
+  <ul class="bullets">
+    <li><strong>System clock manipulation</strong> — A determined user could freeze their clock or use VM snapshots. The anti-tamper detection makes casual cheating difficult.</li>
+    <li><strong>Memory dumping</strong> — Running code is decrypted in memory. A skilled hacker could dump and analyze it.</li>
+    <li><strong>Redistribution by a trusted client</strong> — If someone buys a legitimate license and shares their copy with a friend, the friend won't have the right hardware ID. The license won't work.</li>
+  </ul>
+
+  <h3>Optional: Build a Single .exe</h3>
+  <p>
+    For extra protection, you can compile the app into a single Windows executable.
+    This bundles Node.js + all code into one <code class="code-inline">.exe</code> file.
+    The build script is provided but may need adjustments depending on your system.
+  </p>
+  <div class="code-block">
+    <span class="comment"># Build using the @yao-pkg/pkg fork (better compatibility)</span>
+    <span class="cmd">node</span> scripts/build-exe.js
+  </div>
+  <p>
+    The output goes to <code class="code-inline">dist/CafeManager.exe</code>.
+    You then distribute just the .exe + .lic file instead of the whole folder.
+  </p>
+</div>
+
+<!-- ═══════════════════ SECTION 8 ═══════════════════ -->
+<div id="s8" class="section">
+  <h2><span class="num">8</span> Client Support &amp; Troubleshooting</h2>
+  <div class="divider"></div>
+
+  <h3>Common Issues Clients Encounter</h3>
+
+  <h4>Issue: "Node.js is not recognized" error when running the .bat</h4>
+  <div class="info-box info">
+    <strong>Cause:</strong> The client doesn't have Node.js installed on their system.
+    The current distribution package expects Node.js to be available.
+  </div>
+  <p><strong>Solution:</strong> Ask them to download and install Node.js from
+    <a href="https://nodejs.org">nodejs.org</a> (the LTS version, ~25 MB installer).
+    After installation, restart the .bat file. Alternatively, you can bundle a portable
+    Node.js in the distribution for a fully self-contained package.</p>
+
+  <h4>Issue: Browser shows blank page or "Cannot connect"</h4>
+  <p><strong>Solution:</strong> Check that the command window is still open (closing it stops the server).
+    Make sure they're visiting exactly <code class="code-inline">http://localhost:3001</code> (not HTTPS, not a different port).
+    If the port 3001 is already in use, close other programs and try again.</p>
+
+  <h4>Issue: "License required" page keeps showing after placing .lic file</h4>
+  <p><strong>Solution:</strong> Make sure the file is named exactly <code class="code-inline">license.lic</code>
+    (not <code class="code-inline">license (1).lic</code> or <code class="code-inline">Joe_s_Cafe.lic</code>).
+    The app automatically detects any <code class="code-inline">.lic</code> file, but the
+    upload method in the browser is more reliable. Try uploading through the browser instead.</p>
+
+  <h4>Issue: "License expired" on a new computer</h4>
+  <p><strong>Solution:</strong> The license is locked to the original machine's hardware ID.
+    If the client gets a new computer, they need a new license. Your process: ask for the
+    new Hardware ID → generate a new .lic → send it to them.</p>
+
+  <h4>Issue: "System clock tampering detected"</h4>
+  <p><strong>Solution:</strong> The client's computer date/time was changed. Ask them to:
+    <ol class="steps">
+      <li>Right-click the clock in the taskbar → "Adjust date/time"</li>
+      <li>Turn on "Set time automatically"</li>
+      <li>Click "Sync now"</li>
+      <li>Restart Cafe Manager</li>
+    </ol>
+    If the issue persists, delete the <code class="code-inline">data/.license-check</code>
+    file in the app folder and restart.
+  </p>
+
+  <h4>Issue: Accidentally deleted the database</h4>
+  <p><strong>Solution:</strong> Check the <code class="code-inline">backend/backups/</code>
+    folder. The app creates automatic daily backups at 4 AM (keeps last 30 backups).
+    To restore, replace the <code class="code-inline">cafe.db</code> file with a backup.</p>
+
+  <h3>Support Workflow (For You)</h3>
+  <ol class="steps">
+    <li><strong>Client reports issue</strong> — Ask for a screenshot and description.</li>
+    <li><strong>Check the server log</strong> — The command window shows real-time logs.
+      Ask the client to copy any error messages they see.</li>
+    <li><strong>Common fixes first</strong> — Restart the app, check the .lic file,
+      check the system clock, reinstall the app (keep the database).</li>
+    <li><strong>If nothing works</strong> — Ask the client to send you their
+      <code class="code-inline">backend/database/cafe.db</code> file.
+      You can run it locally to diagnose issues.</li>
+    <li><strong>For critical bugs</strong> — Fix the issue, rebuild the distribution,
+      send them an update.</li>
+  </ol>
+</div>
+
+<!-- ═══════════════════ SECTION 9 ═══════════════════ -->
+<div id="s9" class="section">
+  <h2><span class="num">9</span> Business Operations</h2>
+  <div class="divider"></div>
+
+  <h3>Setting Your Pricing</h3>
+  <p>
+    Research your local market. Cafe/restaurant POS systems typically cost:
+  </p>
+  <table>
+    <thead>
+      <tr><th>Product Type</th><th>Typical Monthly Cost</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Cloud POS (Toast, Square)</td><td>$50–$200/month + 2–3% per transaction</td></tr>
+      <tr><td>On-premise POS (Lightspeed, KORONA)</td><td>$100–$300/month + setup fees</td></tr>
+      <tr><td><strong>Your Cafe Manager</strong></td><td><strong>$29–$79/month</strong> — no transaction fees</td></tr>
+    </tbody>
+  </table>
+  <p>
+    Your advantage: <strong>fully offline, no per-transaction fees, no internet dependency.</strong>
+    This is a huge selling point for cafes in areas with unreliable internet.
+  </p>
+
+  <h3>Keeping Records</h3>
+  <p>For each client, keep a simple spreadsheet (Excel, Google Sheets, or just a text file):</p>
+  <table>
+    <thead>
+      <tr><th>Client Name</th><th>Hardware ID</th><th>Lic File</th><th>Issued</th><th>Expires</th><th>Plan</th><th>Payment Status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Joe's Cafe</td><td>0635f0ca…</td><td>Joe_s_Cafe.lic</td><td>2026-06-25</td><td>2026-09-23</td><td>Quarterly</td><td>✅ Paid</td></tr>
+      <tr><td>Blue Mug</td><td>a1b2c3d4…</td><td>Blue_Mug.lic</td><td>2026-07-01</td><td>2026-07-31</td><td>Monthly</td><td>✅ Paid</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Payment Collection</h3>
+  <p>Since the app is offline, you need to collect payments separately. Options:</p>
+  <ul class="bullets">
+    <li><strong>Bank transfer</strong> — Client sends to your account. Most professional for businesses.</li>
+    <li><strong>PayPal / Venmo / CashApp</strong> — Quick and easy for smaller payments.</li>
+    <li><strong>WhatsApp Pay / Google Pay</strong> — Popular in some regions.</li>
+    <li><strong>Stripe / Paddle</strong> — More formal with automated invoicing.</li>
+  </ul>
+  <p>
+    <strong>Pro tip:</strong> Offer a discount for annual payment. It reduces your admin work
+    and gives you cash upfront. E.g., $249/year instead of $29 × 12 = $348.
+  </p>
+
+  <h3>Scaling Your Business</h3>
+  <ul class="bullets">
+    <li><strong>Start with friends and local cafes</strong> — Offer a discount in exchange for testimonials.</li>
+    <li><strong>Create a simple website</strong> — Just one page describing features and pricing.</li>
+    <li><strong>Offer installation as a service</strong> — Some clients will pay extra for you to set everything up.</li>
+    <li><strong>Consider annual maintenance contracts</strong> — Charge a premium for priority support and updates.</li>
+    <li><strong>Version 5.0 ideas</strong> — Multi-location support, cloud backup option, loyalty programs.</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════ SECTION 10 ═══════════════════ -->
+<div id="s10" class="section">
+  <h2><span class="num">10</span> Quick Reference</h2>
+  <div class="divider"></div>
+
+  <h3>Command Cheat Sheet</h3>
+  <table>
+    <thead>
+      <tr><th>Action</th><th>Command</th><th>Run From</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Generate key pair</td><td><code class="code-inline">cd license-tool && node generate-keys.js</code></td><td>Project root</td></tr>
+      <tr><td>Create a license</td><td><code class="code-inline">cd license-tool && node create-license.js</code></td><td>Project root</td></tr>
+      <tr><td>Build frontend</td><td><code class="code-inline">cd frontend && npm run build</code></td><td>Project root</td></tr>
+      <tr><td>Package for distribution</td><td><code class="code-inline">node scripts/package-dist.js</code></td><td>Project root</td></tr>
+      <tr><td>Build .exe (optional)</td><td><code class="code-inline">node scripts/build-exe.js</code></td><td>Project root</td></tr>
+      <tr><td>Run in dev mode</td><td><code class="code-inline">cd backend && node server.js</code></td><td>Project root</td></tr>
+      <tr><td>Read server logs</td><td>Look at the terminal window</td><td>Wherever server runs</td></tr>
+    </tbody>
+  </table>
+
+  <h3>File Locations</h3>
+  <table>
+    <thead>
+      <tr><th>File</th><th>Where It Is</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>private.pem</code></td><td><code>license-tool/</code></td><td>🔐 Your secret key — never share!</td></tr>
+      <tr><td><code>public.pem</code></td><td><code>license-tool/</code> + embedded in app</td><td>Public key for signature verification</td></tr>
+      <tr><td><code>*.lic</code></td><td><code>license-tool/</code> (after generation)</td><td>License file for a client</td></tr>
+      <tr><td><code>CafeManager-Portable/</code></td><td><code>dist/</code></td><td>Distribution package (zip and send)</td></tr>
+      <tr><td><code>license.lic</code></td><td>App folder (on client's PC)</td><td>Active license file</td></tr>
+      <tr><td><code>cafe.db</code></td><td><code>backend/database/</code> (on client's PC)</td><td>All data (keep safe!)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Client Communication Templates</h3>
+
+  <h4>Welcome Email (New Client)</h4>
+  <div class="info-box info">
+    <p><strong>Subject:</strong> Welcome to Cafe Manager — Here's Your Software</p>
+    <p style="margin-top: 8px;">
+      Hi [Client Name],<br><br>
+      Thank you for choosing Cafe Manager! Your software is attached to this email.
+      Please follow these steps to get started:<br><br>
+      1. Unzip the attached <strong>CafeManager-Portable.zip</strong><br>
+      2. Open the folder and double-click <strong>"Start Cafe Manager.bat"</strong><br>
+      3. A browser will open showing your <strong>Hardware ID</strong> — copy it and reply to this email<br>
+      4. I'll send you your license file within 24 hours<br><br>
+      Need help? Just reply to this email.<br><br>
+      Best,<br>
+      [Your Name]
+    </p>
+  </div>
+
+  <h4>License Delivery</h4>
+  <div class="info-box info">
+    <p><strong>Subject:</strong> Your Cafe Manager License — [Client Name]</p>
+    <p style="margin-top: 8px;">
+      Hi [Client Name],<br><br>
+      Your license file is attached. Here's how to activate:<br><br>
+      <strong>Option 1 (Easiest):</strong><br>
+      • On the License Required page, click "Choose license file"<br>
+      • Select the attached <strong>[filename].lic</strong> file<br>
+      • Refresh the page — you're in!<br><br>
+      <strong>Option 2:</strong><br>
+      • Place the .lic file in your CafeManager-Portable folder<br>
+      • Restart the app<br><br>
+      <strong>Expiry:</strong> Your license is valid until [Date].<br>
+      You'll receive a renewal reminder before it expires.<br><br>
+      Best,<br>
+      [Your Name]
+    </p>
+  </div>
+
+  <h4>Renewal Reminder</h4>
+  <div class="info-box info">
+    <p><strong>Subject:</strong> Your Cafe Manager License Expires Soon</p>
+    <p style="margin-top: 8px;">
+      Hi [Client Name],<br><br>
+      This is a friendly reminder that your Cafe Manager license expires on <strong>[Date]</strong>.<br><br>
+      To continue using the app, please send [Amount] via [payment method] to renew for another [period].<br><br>
+      Once confirmed, I'll send you a new license file right away.<br><br>
+      Best,<br>
+      [Your Name]
+    </p>
+  </div>
+
+  <h3>Quick Troubleshooting Checklist</h3>
+  <ol class="steps">
+    <li>☐ Is the command window still open? (Closing it stops the server)</li>
+    <li>☐ Is the .lic file in the right folder? (Should be in the same folder as the .bat file)</li>
+    <li>☐ Is the .lic file named correctly? (Any name works, but must end in <code class="code-inline">.lic</code>)</li>
+    <li>☐ Is the system clock set correctly? (Wrong date = "expired" or "tampering detected")</li>
+    <li>☐ Is there a previous .lic file interfering? (Delete old ones, keep only the latest)</li>
+    <li>☐ Has the hardware changed? (New computer = new license needed)</li>
+    <li>☐ Restart the app (close and reopen the .bat file)</li>
+    <li>☐ Restart the computer</li>
+  </ol>
+</div>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<div style="text-align: center; padding: 40px 24px; color: #94a3b8; font-size: 13px;">
+  <p style="font-size: 32px; margin-bottom: 8px;">☕</p>
+  <p><strong>Cafe Manager v4.0</strong> — Seller's Guide</p>
+  <p>Built with the offline license system</p>
+  <p style="margin-top: 8px;">&copy; 2026 &middot; All rights reserved</p>
+</div>
+
+</body>
+</html>

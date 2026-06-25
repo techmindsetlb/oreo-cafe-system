@@ -1,0 +1,11 @@
+{
+  "name": "cafe-manager-license-tool",
+  "version": "1.0.0",
+  "private": true,
+  "description": "License generation tool for Cafe Manager - run on YOUR computer only",
+  "scripts": {
+    "generate-keys": "node generate-keys.js",
+    "create-license": "node create-license.js",
+    "start": "node create-license.js"
+  }
+}
